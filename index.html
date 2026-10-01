@@ -1,707 +1,448 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Manual Hand Tracking</title>
-
-<style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kejutan Ulang Tahun 3D</title>
+  <style>
     * {
-        box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
 
-    body {
-        margin: 0;
-        background: #111;
-        color: white;
-        font-family: Arial, sans-serif;
-        text-align: center;
+    body, html {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background-color: #0d0d1a;
+      color: #fff;
     }
 
-    h1 {
-        margin: 20px 0 5px;
+    /* Overlay Intro */
+    #intro-screen {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+      transition: opacity 1s ease, visibility 1s ease;
+      text-align: center;
+      padding: 20px;
     }
 
-    #status {
-        color: #aaa;
-        margin-bottom: 15px;
+    #intro-screen.hidden {
+      opacity: 0;
+      visibility: hidden;
     }
 
-    .camera {
-        position: relative;
-        width: min(900px, 95vw);
-        margin: auto;
-        overflow: hidden;
-        border-radius: 15px;
-        background: #000;
+    #intro-screen h1 {
+      font-size: 2.5rem;
+      margin-bottom: 15px;
+      text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
     }
 
-    video {
-        width: 100%;
-        display: block;
-        transform: scaleX(-1);
+    #intro-screen p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #e2e2e2;
     }
 
-    canvas {
-        position: absolute;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        transform: scaleX(-1);
-        pointer-events: none;
+    .btn-start {
+      padding: 15px 35px;
+      font-size: 1.1rem;
+      font-weight: bold;
+      color: #fff;
+      background: linear-gradient(45deg, #ff416c, #ff4b2b);
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      box-shadow: 0 5px 20px rgba(255, 65, 108, 0.4);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
 
-    #info {
-        margin: 15px auto;
-        width: min(900px, 95vw);
-        padding: 15px;
-        background: #1c1c1c;
-        border-radius: 12px;
-        text-align: left;
+    .btn-start:hover {
+      transform: scale(1.05);
+      box-shadow: 0 8px 25px rgba(255, 65, 108, 0.6);
     }
 
-    .value {
-        color: #00ff88;
-        font-weight: bold;
+    /* Canvas 3D */
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      top: 0;
+      left: 0;
     }
 
-    button {
-        border: 0;
-        padding: 12px 20px;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: bold;
-        margin-bottom: 15px;
+    /* Petunjuk & Ucapan */
+    #ui-overlay {
+      position: absolute;
+      top: 20px;
+      width: 100%;
+      text-align: center;
+      pointer-events: none;
+      z-index: 5;
     }
-</style>
+
+    #instruction {
+      font-size: 1.2rem;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 10px 20px;
+      border-radius: 20px;
+      display: inline-block;
+      backdrop-filter: blur(5px);
+      animation: pulse 2s infinite;
+    }
+
+    #birthday-message {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.5);
+      text-align: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: transform 1s ease, opacity 1s ease;
+      z-index: 5;
+      width: 90%;
+      max-width: 600px;
+    }
+
+    #birthday-message.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+      pointer-events: auto;
+    }
+
+    #birthday-message h2 {
+      font-size: 3rem;
+      color: #ffeb3b;
+      text-shadow: 0 0 20px rgba(255, 235, 59, 0.8);
+      margin-bottom: 15px;
+    }
+
+    #birthday-message p {
+      font-size: 1.3rem;
+      line-height: 1.6;
+      background: rgba(0, 0, 0, 0.6);
+      padding: 20px;
+      border-radius: 15px;
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.6; }
+      50% { opacity: 1; }
+      100% { opacity: 0.6; }
+    }
+  </style>
+  <!-- Three.js CDN -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
-
 <body>
 
-<h1>Manual Hand Tracking</h1>
+  <!-- Layar Intro -->
+  <div id="intro-screen">
+    <h1>Ada Pesan Khusus Buat Kamu 🎁</h1>
+    <p>Seseorang telah menyiapkan sesuatu di sini. Siap buat buka?</p>
+    <button class="btn-start" onclick="startExperience()">Buka Kejutan</button>
+  </div>
 
-<div id="status">
-    Kamera belum aktif
-</div>
+  <!-- Petunjuk Atas -->
+  <div id="ui-overlay">
+    <div id="instruction">Klik kadonya untuk membuka! 📦</div>
+  </div>
 
-<button id="startBtn">
-    START CAMERA
-</button>
+  <!-- Ucapan Ulang Tahun -->
+  <div id="birthday-message">
+    <h2>Selamat Ulang Tahun! 🎉✨</h2>
+    <p>
+      Semoga di usiamu yang baru ini panjang umur, sehat selalu, makin sukses, 
+      dan semua impian serta cita-citamu bisa tercapai. Tetap jadi orang baik dan hebat ya! 🥳🎂
+    </p>
+  </div>
 
-<div class="camera">
-    <video id="video" autoplay playsinline></video>
-    <canvas id="canvas"></canvas>
-</div>
+  <!-- Tempat Renderer 3D -->
+  <div id="canvas-container"></div>
 
-<div id="info">
+  <!-- Musik Latar (Menggunakan Audio Synth Bebas Hak Cipta) -->
+  <audio id="bg-music" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_c8c8a73467.mp3?filename=happy-birthday-155461.mp3" type="audio/mpeg">
+  </audio>
 
-    <div>
-        Status:
-        <span class="value" id="handStatus">
-            Tidak ada tangan
-        </span>
-    </div>
+  <script>
+    let scene, camera, renderer;
+    let giftBox, giftLid, ribbon;
+    let particles = [];
+    let isOpened = false;
+    let raycaster, mouse;
 
-    <div>
-        X:
-        <span class="value" id="posX">0</span>
-    </div>
+    function init3D() {
+      const container = document.getElementById('canvas-container');
 
-    <div>
-        Y:
-        <span class="value" id="posY">0</span>
-    </div>
+      // 1. Scene setup
+      scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x0d0d1a, 0.015);
 
-    <div>
-        Gerakan:
-        <span class="value" id="movement">
-            Diam
-        </span>
-    </div>
+      // 2. Camera setup
+      camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+      camera.position.set(0, 2, 7);
 
-    <div>
-        Kecepatan:
-        <span class="value" id="speed">
-            0
-        </span>
-    </div>
+      // 3. Renderer setup
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.shadowMap.enabled = true;
+      container.appendChild(renderer.domElement);
 
-</div>
+      // 4. Lighting
+      const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+      scene.add(ambientLight);
 
-<canvas id="processCanvas" style="display:none;"></canvas>
+      const pointLight = new THREE.PointLight(0xff007f, 1.5, 50);
+      pointLight.position.set(5, 5, 5);
+      scene.add(pointLight);
 
-<script>
+      const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+      dirLight.position.set(-5, 10, 7);
+      dirLight.castShadow = true;
+      scene.add(dirLight);
 
-const video = document.getElementById("video");
-const canvas = document.getElementById("canvas");
-const ctx = canvas.getContext("2d");
+      // 5. Membuat Kado 3D
+      const giftGroup = new THREE.Group();
 
-const processCanvas = document.getElementById("processCanvas");
-const processCtx = processCanvas.getContext("2d");
+      // Bahan / Material
+      const boxMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0xe63946, 
+        roughness: 0.3,
+        metalness: 0.1
+      });
+      const ribbonMaterial = new THREE.MeshStandardMaterial({ 
+        color: 0xffd700, 
+        roughness: 0.2,
+        metalness: 0.8
+      });
 
-const startBtn = document.getElementById("startBtn");
+      // Badan Kado
+      const boxGeo = new THREE.BoxGeometry(2, 1.6, 2);
+      giftBox = new THREE.Mesh(boxGeo, boxMaterial);
+      giftBox.position.y = -0.2;
+      giftGroup.add(giftBox);
 
-const statusText = document.getElementById("status");
-const handStatus = document.getElementById("handStatus");
+      // Tutup Kado
+      const lidGeo = new THREE.BoxGeometry(2.1, 0.4, 2.1);
+      giftLid = new THREE.Mesh(lidGeo, boxMaterial);
+      giftLid.position.y = 0.7;
+      giftGroup.add(giftLid);
 
-const posX = document.getElementById("posX");
-const posY = document.getElementById("posY");
+      // Pita Vertikal
+      const ribbonVGeo = new THREE.BoxGeometry(0.3, 1.62, 2.02);
+      const ribbonV = new THREE.Mesh(ribbonVGeo, ribbonMaterial);
+      giftBox.add(ribbonV);
 
-const movementText = document.getElementById("movement");
-const speedText = document.getElementById("speed");
+      // Pita Horisontal
+      const ribbonHGeo = new THREE.BoxGeometry(2.02, 1.62, 0.3);
+      const ribbonH = new THREE.Mesh(ribbonHGeo, ribbonMaterial);
+      giftBox.add(ribbonH);
 
+      // Pita Tutup
+      const ribbonLidV = new THREE.Mesh(new THREE.BoxGeometry(0.32, 0.42, 2.12), ribbonMaterial);
+      const ribbonLidH = new THREE.Mesh(new THREE.BoxGeometry(2.12, 0.42, 0.32), ribbonMaterial);
+      giftLid.add(ribbonLidV);
+      giftLid.add(ribbonLidH);
 
-let previousX = null;
-let previousY = null;
+      // Bintang / Latar belakang partikel
+      createBackgroundStars();
 
-let smoothX = null;
-let smoothY = null;
+      scene.add(giftGroup);
+      window.giftGroup = giftGroup;
 
-let lastTime = performance.now();
+      // Raycaster untuk deteksi klik pada objek 3D
+      raycaster = new THREE.Raycaster();
+      mouse = new THREE.Vector2();
 
-let running = false;
+      window.addEventListener('resize', onWindowResize);
+      window.addEventListener('click', onDocumentOptionClick);
+      window.addEventListener('touchstart', onDocumentTouchStart, { passive: false });
 
-
-/*
-====================================================
-START CAMERA
-====================================================
-*/
-
-startBtn.addEventListener("click", async () => {
-
-    try {
-
-        const stream = await navigator.mediaDevices.getUserMedia({
-            video: {
-                width: {
-                    ideal: 640
-                },
-                height: {
-                    ideal: 480
-                },
-                facingMode: "user"
-            },
-            audio: false
-        });
-
-        video.srcObject = stream;
-
-        statusText.textContent = "Kamera aktif";
-
-        running = true;
-
-        video.addEventListener("loadedmetadata", () => {
-
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-
-            processCanvas.width = video.videoWidth;
-            processCanvas.height = video.videoHeight;
-
-            requestAnimationFrame(trackHand);
-
-        });
-
-    } catch (error) {
-
-        console.error(error);
-
-        statusText.textContent =
-            "Kamera gagal dibuka";
-
-        alert(
-            "Kamera tidak bisa digunakan.\n\n" +
-            "Pastikan izin kamera sudah diberikan."
-        );
-
+      animate();
     }
 
-});
+    function createBackgroundStars() {
+      const starGeo = new THREE.BufferGeometry();
+      const count = 500;
+      const positions = new Float32Array(count * 3);
 
+      for(let i = 0; i < count * 3; i++) {
+        positions[i] = (Math.random() - 0.5) * 50;
+      }
 
-/*
-====================================================
-SKIN COLOR DETECTION
-====================================================
-*/
+      starGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      const starMat = new THREE.PointsMaterial({
+        color: 0xffffff,
+        size: 0.1,
+        transparent: true,
+        opacity: 0.8
+      });
 
-function isSkin(r, g, b) {
+      const starPoints = new THREE.Points(starGeo, starMat);
+      scene.add(starPoints);
+    }
 
-    /*
-    Threshold warna kulit.
+    function createFireworks() {
+      const particleCount = 150;
+      const geometry = new THREE.BufferGeometry();
+      const positions = new Float32Array(particleCount * 3);
+      const colors = new Float32Array(particleCount * 3);
+      const velocities = [];
 
-    Ini sengaja dibuat cukup longgar
-    supaya tangan tidak gampang hilang.
-    */
+      const colorPalette = [
+        new THREE.Color(0xff416c),
+        new THREE.Color(0xffd700),
+        new THREE.Color(0x00f2fe),
+        new THREE.Color(0x4facfe)
+      ];
 
-    const condition1 =
-        r > 80 &&
-        g > 40 &&
-        b > 20;
+      for (let i = 0; i < particleCount; i++) {
+        positions[i * 3] = 0;
+        positions[i * 3 + 1] = 0.5;
+        positions[i * 3 + 2] = 0;
 
-    const condition2 =
-        r > g &&
-        r > b;
+        const color = colorPalette[Math.floor(Math.random() * colorPalette.length)];
+        colors[i * 3] = color.r;
+        colors[i * 3 + 1] = color.g;
+        colors[i * 3 + 2] = color.b;
 
-    const condition3 =
-        Math.abs(r - g) > 10;
-
-    const condition4 =
-        r + g + b > 180;
-
-    return (
-        condition1 &&
-        condition2 &&
-        condition3 &&
-        condition4
-    );
-
-}
-
-
-/*
-====================================================
-HAND DETECTION
-====================================================
-*/
-
-function detectHand() {
-
-    processCtx.drawImage(
-        video,
-        0,
-        0,
-        processCanvas.width,
-        processCanvas.height
-    );
-
-    const imageData =
-        processCtx.getImageData(
-            0,
-            0,
-            processCanvas.width,
-            processCanvas.height
+        // Vektor kecepatan acak ke segala arah
+        const p = new THREE.Vector3(
+          (Math.random() - 0.5) * 8,
+          Math.random() * 8 + 2,
+          (Math.random() - 0.5) * 8
         );
+        velocities.push(p);
+      }
 
-    const data = imageData.data;
+      geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+      geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
-    let totalX = 0;
-    let totalY = 0;
+      const material = new THREE.PointsMaterial({
+        size: 0.15,
+        vertexColors: true,
+        transparent: true,
+        opacity: 1
+      });
 
-    let count = 0;
+      const pSystem = new THREE.Points(geometry, material);
+      pSystem.userData = { velocities: velocities, age: 0 };
+      scene.add(pSystem);
+      particles.push(pSystem);
+    }
 
-    /*
-    Scan setiap beberapa pixel.
+    function openGift() {
+      if (isOpened) return;
+      isOpened = true;
 
-    Tidak semua pixel diproses supaya
-    browser tidak megap-megap.
-    */
+      document.getElementById('instruction').style.display = 'none';
 
-    const step = 4;
+      // Efek Kembang Api Partikel
+      createFireworks();
 
-    for (
-        let y = 0;
-        y < processCanvas.height;
-        y += step
-    ) {
+      // Tampilkan ucapan
+      setTimeout(() => {
+        document.getElementById('birthday-message').classList.add('show');
+      }, 500);
+    }
 
-        for (
-            let x = 0;
-            x < processCanvas.width;
-            x += step
-        ) {
+    function checkIntersection(clientX, clientY) {
+      mouse.x = (clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(clientY / window.innerHeight) * 2 + 1;
 
-            const index =
-                (y * processCanvas.width + x) * 4;
+      raycaster.setFromCamera(mouse, camera);
+      const intersects = raycaster.intersectObjects(window.giftGroup.children, true);
 
-            const r = data[index];
-            const g = data[index + 1];
-            const b = data[index + 2];
+      if (intersects.length > 0) {
+        openGift();
+      }
+    }
 
-            if (isSkin(r, g, b)) {
+    function onDocumentOptionClick(event) {
+      checkIntersection(event.clientX, event.clientY);
+    }
 
-                totalX += x;
-                totalY += y;
+    function onDocumentTouchStart(event) {
+      if (event.touches.length > 0) {
+        checkIntersection(event.touches[0].clientX, event.touches[0].clientY);
+      }
+    }
 
-                count++;
+    function onWindowResize() {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+    }
 
-            }
+    function animate() {
+      requestAnimationFrame(animate);
 
+      // Rotasi kado pelan jika belum dibuka
+      if (window.giftGroup && !isOpened) {
+        window.giftGroup.rotation.y += 0.008;
+        window.giftGroup.position.y = Math.sin(Date.now() * 0.002) * 0.15;
+      }
+
+      // Animasi Terbuka
+      if (isOpened && giftLid.position.y < 3) {
+        giftLid.position.y += 0.08;
+        giftLid.rotation.x += 0.03;
+        giftLid.rotation.z += 0.02;
+        window.giftGroup.rotation.y += 0.01;
+      }
+
+      // Update Partikel Kembang Api
+      for (let i = 0; i < particles.length; i++) {
+        const pSys = particles[i];
+        const positions = pSys.geometry.attributes.position.array;
+        const vels = pSys.userData.velocities;
+
+        for (let j = 0; j < vels.length; j++) {
+          positions[j * 3] += vels[j].x * 0.015;
+          positions[j * 3 + 1] += vels[j].y * 0.015; // Kecepatan Y
+          positions[j * 3 + 2] += vels[j].z * 0.015;
+
+          vels[j].y -= 0.1; // Gravitasi
         }
 
+        pSys.geometry.attributes.position.needsUpdate = true;
+        pSys.material.opacity -= 0.005;
+
+        pSys.userData.age += 1;
+      }
+
+      renderer.render(scene, camera);
     }
 
+    // Fungsi Pembuka Intro
+    function startExperience() {
+      document.getElementById('intro-screen').classList.add('hidden');
+      
+      // Jalankan Audio Musik
+      const music = document.getElementById('bg-music');
+      music.play().catch(err => {
+        console.log("Autoplay ditolak oleh browser:", err);
+      });
 
-    /*
-    Kalau pixel kulit terlalu sedikit,
-    anggap tangan tidak ditemukan.
-    */
-
-    if (count < 100) {
-
-        return null;
-
+      // Inisialisasi 3D Canvas
+      init3D();
     }
-
-
-    const centerX =
-        totalX / count;
-
-    const centerY =
-        totalY / count;
-
-
-    return {
-        x: centerX,
-        y: centerY,
-        pixels: count
-    };
-
-}
-
-
-/*
-====================================================
-SMOOTHING
-====================================================
-*/
-
-function smoothPosition(x, y) {
-
-    if (smoothX === null) {
-
-        smoothX = x;
-        smoothY = y;
-
-        return {
-            x,
-            y
-        };
-
-    }
-
-
-    const smoothing = 0.25;
-
-    smoothX =
-        smoothX +
-        (x - smoothX) *
-        smoothing;
-
-    smoothY =
-        smoothY +
-        (y - smoothY) *
-        smoothing;
-
-
-    return {
-        x: smoothX,
-        y: smoothY
-    };
-
-}
-
-
-/*
-====================================================
-MOVEMENT
-====================================================
-*/
-
-function calculateMovement(x, y) {
-
-    if (
-        previousX === null ||
-        previousY === null
-    ) {
-
-        previousX = x;
-        previousY = y;
-
-        return {
-            direction: "Diam",
-            speed: 0
-        };
-
-    }
-
-
-    const dx =
-        x - previousX;
-
-    const dy =
-        y - previousY;
-
-
-    const distance =
-        Math.sqrt(
-            dx * dx +
-            dy * dy
-        );
-
-
-    let direction = "Diam";
-
-
-    const threshold = 8;
-
-
-    if (distance > threshold) {
-
-        if (
-            Math.abs(dx) >
-            Math.abs(dy)
-        ) {
-
-            if (dx > 0) {
-
-                direction = "Kanan";
-
-            } else {
-
-                direction = "Kiri";
-
-            }
-
-        } else {
-
-            if (dy > 0) {
-
-                direction = "Bawah";
-
-            } else {
-
-                direction = "Atas";
-
-            }
-
-        }
-
-    }
-
-
-    previousX = x;
-    previousY = y;
-
-
-    return {
-        direction,
-        speed: Math.round(distance)
-    };
-
-}
-
-
-/*
-====================================================
-DRAW TRACKING
-====================================================
-*/
-
-function drawTracking(x, y) {
-
-    ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-    );
-
-
-    /*
-    Titik utama
-    */
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        18,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.strokeStyle = "#00ff88";
-    ctx.lineWidth = 4;
-
-    ctx.stroke();
-
-
-    /*
-    Titik tengah
-    */
-
-    ctx.beginPath();
-
-    ctx.arc(
-        x,
-        y,
-        5,
-        0,
-        Math.PI * 2
-    );
-
-    ctx.fillStyle = "#00ff88";
-
-    ctx.fill();
-
-
-    /*
-    Crosshair horizontal
-    */
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        x - 35,
-        y
-    );
-
-    ctx.lineTo(
-        x + 35,
-        y
-    );
-
-    ctx.strokeStyle = "#00ff88";
-    ctx.lineWidth = 2;
-
-    ctx.stroke();
-
-
-    /*
-    Crosshair vertical
-    */
-
-    ctx.beginPath();
-
-    ctx.moveTo(
-        x,
-        y - 35
-    );
-
-    ctx.lineTo(
-        x,
-        y + 35
-    );
-
-    ctx.stroke();
-
-
-    /*
-    Koordinat
-    */
-
-    ctx.font = "16px Arial";
-
-    ctx.fillStyle = "#00ff88";
-
-    ctx.fillText(
-        `X: ${Math.round(x)} Y: ${Math.round(y)}`,
-        x + 25,
-        y - 25
-    );
-
-}
-
-
-/*
-====================================================
-MAIN TRACKING LOOP
-====================================================
-*/
-
-function trackHand() {
-
-    if (!running) {
-        return;
-    }
-
-
-    const hand = detectHand();
-
-
-    if (hand) {
-
-        const position =
-            smoothPosition(
-                hand.x,
-                hand.y
-            );
-
-
-        const movement =
-            calculateMovement(
-                position.x,
-                position.y
-            );
-
-
-        drawTracking(
-            position.x,
-            position.y
-        );
-
-
-        handStatus.textContent =
-            "Terdeteksi";
-
-
-        posX.textContent =
-            Math.round(position.x);
-
-
-        posY.textContent =
-            Math.round(position.y);
-
-
-        movementText.textContent =
-            movement.direction;
-
-
-        speedText.textContent =
-            movement.speed;
-
-
-    } else {
-
-        ctx.clearRect(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-        );
-
-
-        handStatus.textContent =
-            "Tidak ada tangan";
-
-
-        movementText.textContent =
-            "Diam";
-
-
-        speedText.textContent =
-            "0";
-
-
-        /*
-        Jangan langsung reset posisi.
-        Biar tracking nggak gampang ngaco
-        ketika tangan hilang sebentar.
-        */
-
-    }
-
-
-    requestAnimationFrame(trackHand);
-
-}
-
-</script>
-
+  </script>
 </body>
 </html>
