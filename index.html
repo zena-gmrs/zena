@@ -2607,7 +2607,15 @@
                 }
             }, 1000);
         }
+// KONEKSI SUPABASE
+const SUPABASE_URL = 'https://wlhfzgdyyeudrpxislcb.supabase.co';
 
+const SUPABASE_KEY = 'sb_publishable_3i6dLIn6q1W9XVNMKWGgyg_VEmgL9yz';
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
         window.addEventListener('DOMContentLoaded', () => {
             DB.init();
             updateNavbarState();
