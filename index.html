@@ -110,10 +110,10 @@
                 <div>
                     <h4 class="font-display font-bold text-white text-xs uppercase tracking-wider mb-3">Game Populer</h4>
                     <ul class="space-y-2 text-xs text-slate-400">
-                        <li><button onclick="navigateTo('catalog', {category: 'Mobile Legends'})" class="hover:text-violet-400">Mobile Legends: Bang Bang</button></li>
-                        <li><button onclick="navigateTo('catalog', {category: 'PUBG Mobile'})" class="hover:text-violet-400">PUBG Mobile</button></li>
-                        <li><button onclick="navigateTo('catalog', {category: 'Genshin Impact'})" class="hover:text-violet-400">Genshin Impact</button></li>
-                        <li><button onclick="navigateTo('catalog', {category: 'Free Fire'})" class="hover:text-violet-400">Free Fire</button></li>
+                        <li><button onclick="navigateTo('catalog', {game: 'Mobile Legends'})" class="hover:text-violet-400">Mobile Legends: Bang Bang</button></li>
+                        <li><button onclick="navigateTo('catalog', {game: 'PUBG Mobile'})" class="hover:text-violet-400">PUBG Mobile</button></li>
+                        <li><button onclick="navigateTo('catalog', {game: 'Genshin Impact'})" class="hover:text-violet-400">Genshin Impact</button></li>
+                        <li><button onclick="navigateTo('catalog', {game: 'Free Fire'})" class="hover:text-violet-400">Free Fire</button></li>
                     </ul>
                 </div>
                 <div>
@@ -140,7 +140,7 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const DEFAULT_USERS = [
-            { id: 'USR-001', name: 'Rian Gamer', email: 'rian@pasarkita.id', password: '123', role: 'customer', phone: '0812-3456-7890', address: 'Bandung' },
+            { id: 'USR-001', name: 'Customer Umum', email: 'guest@pasarkita.id', password: '123', role: 'customer', phone: '0812-0000-0000', address: 'Indonesia' },
             { id: 'USR-002', name: 'Admin Store Games', email: 'admin@pasarkita.id', password: '123', role: 'admin', phone: '0811-9999-0000', address: 'Jakarta' }
         ];
 
@@ -305,7 +305,7 @@
             const session = DB.getSession();
             const authArea = document.getElementById('nav-auth-area');
             if (authArea) {
-                if (session) {
+                if (session && session.id !== 'USR-001') {
                     authArea.innerHTML = `
                         <div class="flex items-center gap-2">
                             <button onclick="navigateTo('customer-dashboard')" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 transition-colors text-left">
@@ -318,7 +318,7 @@
                         </div>
                     `;
                 } else {
-                    authArea.innerHTML = `<button onclick="navigateTo('customer-dashboard')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-violet-600 hover:bg-violet-700 text-white shadow-md">Masuk</button>`;
+                    authArea.innerHTML = `<button onclick="navigateTo('customer-dashboard')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-violet-600 hover:bg-violet-700 text-white shadow-md">Dashboard Saya</button>`;
                 }
             }
             if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -333,8 +333,8 @@
         }
 
         function handleLogout() {
-            DB.saveSession(null);
-            showToast('Berhasil keluar');
+            DB.saveSession(DEFAULT_USERS[0]);
+            showToast('Sesi direset');
             navigateTo('home');
         }
 
@@ -401,14 +401,14 @@
             `;
         }
 
-        // 2. GAME STORE STOREFRONT VIEW (List Diamond per Game + Form UID + Pembayaran)
+        // 2. GAME STORE STOREFRONT VIEW (List Diamond per Game + Form UID Dinamis)
         async function renderGameStoreView() {
             const products = await DB.getProducts();
             const games = [...new Set(products.map(p => p.category))];
             if (!games.includes(state.selectedGame)) state.selectedGame = games[0] || 'Mobile Legends';
 
             const gameProducts = products.filter(p => p.category === state.selectedGame);
-            const session = DB.getSession() || (await DB.getUsers())[0];
+            const session = DB.getSession() || DEFAULT_USERS[0];
 
             return `
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
@@ -420,12 +420,13 @@
                     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <!-- Kolom Kiri: 1. Masukkan Data Akun & 2. Pilih Nominal Diamond -->
                         <div class="lg:col-span-2 space-y-8">
-                            <!-- Step 1: Input Data Akun -->
+                            <!-- Step 1: Input Data Akun & Nama Pembeli -->
                             <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-4">
                                 <h3 class="font-display font-bold text-sm text-white flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs">1</span> Masukkan Data Akun ${state.selectedGame}</h3>
-                                <div class="grid grid-cols-2 gap-4 text-xs">
-                                    <div><label class="block text-slate-400 mb-1">User ID / UID</label><input type="text" id="input-game-id" placeholder="Contoh: 12345678" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white"></div>
-                                    <div><label class="block text-slate-400 mb-1">Server / Zone ID</label><input type="text" id="input-game-server" placeholder="Contoh: (1234)" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white"></div>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
+                                    <div><label class="block text-slate-400 mb-1">Nama Pembeli</label><input type="text" id="input-buyer-name" value="${session.name === 'Customer Umum' ? '' : session.name}" placeholder="Nama Anda" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white"></div>
+                                    <div><label class="block text-slate-400 mb-1">User ID / UID</label><input type="text" id="input-game-id" placeholder="Cth: 12345678" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white"></div>
+                                    <div><label class="block text-slate-400 mb-1">Server / Zone ID</label><input type="text" id="input-game-server" placeholder="Cth: (1234)" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white"></div>
                                 </div>
                             </div>
 
@@ -434,7 +435,7 @@
                                 <h3 class="font-display font-bold text-sm text-white flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs">2</span> Pilih Nominal Top Up</h3>
                                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
                                     ${gameProducts.map(p => `
-                                        <label onclick="state.selectedProductId = '${p.id}';" class="game-item-card p-4 rounded-2xl bg-slate-950 border border-slate-800 hover:border-violet-500 cursor-pointer flex flex-col justify-between transition-all relative">
+                                        <label onclick="state.selectedProductId = '${p.id}';" class="p-4 rounded-2xl bg-slate-950 border border-slate-800 hover:border-violet-500 cursor-pointer flex flex-col justify-between transition-all relative">
                                             <input type="radio" name="selected-item" value="${p.id}" ${state.selectedProductId === p.id ? 'checked' : ''} class="absolute top-3 right-3 text-violet-600">
                                             <div class="space-y-1 pr-6">
                                                 <h4 class="font-display font-bold text-xs text-white">${p.name}</h4>
@@ -463,7 +464,6 @@
                                 </div>
 
                                 <div class="pt-4 border-t border-slate-800 space-y-2 text-xs">
-                                    <div class="flex justify-between text-slate-400"><span>Pembeli</span><span class="font-bold text-white">${session.name}</span></div>
                                     <div class="flex justify-between text-slate-400"><span>Game</span><span class="font-bold text-white">${state.selectedGame}</span></div>
                                 </div>
 
@@ -476,9 +476,14 @@
         }
 
         async function processTopUpFromStore() {
+            const buyerName = document.getElementById('input-buyer-name')?.value.trim();
             const gameId = document.getElementById('input-game-id')?.value.trim();
             const serverId = document.getElementById('input-game-server')?.value.trim();
 
+            if (!buyerName) {
+                showToast('Mohon masukkan nama pembeli!', 'error');
+                return;
+            }
             if (!gameId) {
                 showToast('Mohon masukkan User ID game Anda!', 'error');
                 return;
@@ -490,12 +495,12 @@
 
             const products = await DB.getProducts();
             const p = products.find(x => x.id === state.selectedProductId);
-            const session = DB.getSession() || (await DB.getUsers())[0];
+            const session = DB.getSession() || DEFAULT_USERS[0];
 
             const newTx = {
                 invoice: `INV-GAME-${Math.floor(1000 + Math.random() * 9000)}`,
                 userId: session.id,
-                customerName: session.name,
+                customerName: buyerName,
                 phone: session.phone || '0812345678',
                 shippingAddress: `UID: ${gameId} (${serverId || 'No Server'})`,
                 shippingMethod: 'Instant Game Delivery',
@@ -510,27 +515,25 @@
             };
 
             await DB.saveTransaction(newTx);
-            showToast(`Top Up ${p.name} Berhasil untuk UID ${gameId}!`);
+            showToast(`Top Up ${p.name} Berhasil untuk ${buyerName}!`);
             navigateTo('customer-dashboard');
         }
 
         // 3. CUSTOMER DASHBOARD
         async function renderCustomerDashboardView() {
-            const session = DB.getSession() || (await DB.getUsers())[0];
             const transactions = await DB.getTransactions();
-            const userTxs = transactions.filter(t => t.userId === session.id);
 
             return `
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
                     <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 flex items-center justify-between">
-                        <div><h1 class="font-extrabold text-xl text-white">${session.name}</h1><p class="text-xs text-slate-400">${session.email}</p></div>
-                        <button onclick="handleLogout()" class="px-4 py-2 bg-rose-500/10 text-rose-400 font-semibold text-xs rounded-xl">Keluar</button>
+                        <div><h1 class="font-extrabold text-xl text-white">Dashboard Riwayat Top Up</h1><p class="text-xs text-slate-400">Semua transaksi sukses tercatat di database.</p></div>
                     </div>
                     <div class="space-y-4">
-                        <h2 class="font-bold text-lg text-white">Riwayat Transaksi Top Up Game</h2>
-                        ${userTxs.length === 0 ? `<div class="bg-slate-900 p-12 rounded-2xl border border-slate-800 text-center text-xs text-slate-400">Belum ada riwayat top up.</div>` : userTxs.map(t => `
+                        <h2 class="font-bold text-lg text-white">Daftar Transaksi Store</h2>
+                        ${transactions.length === 0 ? `<div class="bg-slate-900 p-12 rounded-2xl border border-slate-800 text-center text-xs text-slate-400">Belum ada riwayat top up.</div>` : transactions.map(t => `
                             <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xs space-y-3 text-xs">
                                 <div class="flex justify-between font-bold text-white"><span>${t.invoice}</span>${getStatusBadge(t.status)}</div>
+                                <div class="text-slate-400">Pemesan: <span class="text-white font-semibold">${t.customerName}</span></div>
                                 <div class="text-slate-400">Akun / UID: <span class="text-violet-400 font-semibold">${t.shippingAddress}</span></div>
                                 <div class="text-slate-400">Item: <span class="text-white font-semibold">${t.items[0]?.name || 'Diamond'}</span></div>
                                 <div class="text-slate-400">Total: <span class="font-bold text-white">${formatRupiah(t.total)}</span> (${t.createdAt})</div>
