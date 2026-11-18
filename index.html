@@ -64,7 +64,7 @@
 
                 <!-- Primary Navigation Links -->
                 <nav class="hidden lg:flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60">
-                    <button onclick="navigateTo('home')" data-nav="home" class="nav-link px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all">Beranda Game</button>
+                    <button onclick="navigateTo('home')" data-nav="home" class="nav-link px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all">Beranda</button>
                     <button onclick="navigateTo('catalog')" data-nav="catalog" class="nav-link px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all">Semua Game</button>
                     <button onclick="navigateTo('database')" data-nav="database" class="nav-link px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
                         <i data-lucide="database" class="w-3.5 h-3.5 text-violet-400"></i> Supabase Inspector
@@ -81,19 +81,6 @@
                         <i data-lucide="shield" class="w-3.5 h-3.5"></i>
                         <span>Admin</span>
                     </button>
-
-                    <!-- Cart / Cek Transaksi Button -->
-                    <button 
-                        onclick="navigateTo('cart')" 
-                        data-nav="cart"
-                        class="nav-link relative p-2.5 rounded-xl text-slate-300 hover:text-violet-400 hover:bg-slate-800 transition-colors"
-                        aria-label="Keranjang Top Up"
-                    >
-                        <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                        <span id="nav-cart-badge" class="absolute -top-1 -right-1 min-w-[20px] h-5 px-1.5 rounded-full bg-violet-600 text-white text-[11px] font-bold flex items-center justify-center shadow-sm">0</span>
-                    </button>
-
-                    <div class="h-6 w-px bg-slate-800"></div>
 
                     <!-- User Account / Auth Area -->
                     <div id="nav-auth-area"></div>
@@ -123,10 +110,10 @@
                 <div>
                     <h4 class="font-display font-bold text-white text-xs uppercase tracking-wider mb-3">Game Populer</h4>
                     <ul class="space-y-2 text-xs text-slate-400">
-                        <li><button onclick="navigateTo('catalog')" class="hover:text-violet-400">Mobile Legends: Bang Bang</button></li>
-                        <li><button onclick="navigateTo('catalog')" class="hover:text-violet-400">PUBG Mobile</button></li>
-                        <li><button onclick="navigateTo('catalog')" class="hover:text-violet-400">Genshin Impact</button></li>
-                        <li><button onclick="navigateTo('catalog')" class="hover:text-violet-400">Free Fire</button></li>
+                        <li><button onclick="navigateTo('catalog', {category: 'Mobile Legends'})" class="hover:text-violet-400">Mobile Legends: Bang Bang</button></li>
+                        <li><button onclick="navigateTo('catalog', {category: 'PUBG Mobile'})" class="hover:text-violet-400">PUBG Mobile</button></li>
+                        <li><button onclick="navigateTo('catalog', {category: 'Genshin Impact'})" class="hover:text-violet-400">Genshin Impact</button></li>
+                        <li><button onclick="navigateTo('catalog', {category: 'Free Fire'})" class="hover:text-violet-400">Free Fire</button></li>
                     </ul>
                 </div>
                 <div>
@@ -160,7 +147,9 @@
         const DEFAULT_PRODUCTS = [
             { id: 'PRD-ML-01', name: '86 Diamond (78 + 8 Bonus)', category: 'Mobile Legends', price: 20000, original_price: 23000, stock: 999, sold: 4500, condition: 'Instant', rating: 4.9, seller: 'Official Moonton Partner', location: 'Global', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80', description: 'Top up Diamond Mobile Legends resmi, cepat, dan otomatis masuk dalam 1 detik.' },
             { id: 'PRD-ML-02', name: '257 Diamond (240 + 17 Bonus)', category: 'Mobile Legends', price: 60000, original_price: 70000, stock: 999, sold: 2300, condition: 'Instant', rating: 5.0, seller: 'Official Moonton Partner', location: 'Global', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80', description: 'Paket sultan diamond ML untuk beli skin Epic / Collector.' },
+            { id: 'PRD-ML-03', name: '514 Diamond (482 + 32 Bonus)', category: 'Mobile Legends', price: 115000, original_price: 130000, stock: 999, sold: 1800, condition: 'Instant', rating: 4.9, seller: 'Official Moonton Partner', location: 'Global', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80', description: 'Paket hemat diamond besar.' },
             { id: 'PRD-PUBG-01', name: '660 UC PUBG Mobile', category: 'PUBG Mobile', price: 145000, original_price: 160000, stock: 999, sold: 1200, condition: 'Instant', rating: 4.8, seller: 'Tencent Games', location: 'Global', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80', description: 'Unknown Cash (UC) resmi PUBG Mobile untuk Royale Pass.' },
+            { id: 'PRD-PUBG-02', name: '325 UC PUBG Mobile', category: 'PUBG Mobile', price: 75000, original_price: 85000, stock: 999, sold: 950, condition: 'Instant', rating: 4.8, seller: 'Tencent Games', location: 'Global', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80', description: 'UC PUBG Mobile medium package.' },
             { id: 'PRD-GEN-01', name: '300 Genesis Crystal Genshin', category: 'Genshin Impact', price: 79000, original_price: 89000, stock: 999, sold: 890, condition: 'Instant', rating: 4.9, seller: 'HoYoverse Partner', location: 'Global', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=800&q=80', description: 'Genesis Crystal langsung masuk via UID untuk gacha karakter.' },
             { id: 'PRD-FF-01', name: '140 Diamond Free Fire', category: 'Free Fire', price: 19000, original_price: 22000, stock: 999, sold: 3400, condition: 'Instant', rating: 4.7, seller: 'Garena Official', location: 'Global', is_flash_sale: false, image: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=800&q=80', description: 'Diamond Free Fire aman 100% legal.' }
         ];
@@ -176,9 +165,6 @@
                     const { data: usrs } = await supabaseClient.from('users').select('*');
                     if (!usrs || usrs.length === 0) {
                         await supabaseClient.from('users').insert(DEFAULT_USERS);
-                    }
-                    if (!localStorage.getItem('pasarkitagames_cart_v1')) {
-                        localStorage.setItem('pasarkitagames_cart_v1', JSON.stringify([{ productId: 'PRD-ML-01', qty: 1, selected: true }]));
                     }
                     if (!localStorage.getItem('pasarkitagames_session_v1')) {
                         localStorage.setItem('pasarkitagames_session_v1', JSON.stringify(DEFAULT_USERS[0]));
@@ -254,9 +240,6 @@
                 });
             },
 
-            getCart() { return JSON.parse(localStorage.getItem('pasarkitagames_cart_v1') || '[]'); },
-            saveCart(data) { localStorage.setItem('pasarkitagames_cart_v1', JSON.stringify(data)); updateNavbarState(); },
-
             getSession() {
                 const raw = localStorage.getItem('pasarkitagames_session_v1');
                 return raw ? JSON.parse(raw) : null;
@@ -271,9 +254,8 @@
         // APPLICATION STATE & ROUTER
         let state = {
             currentView: 'home',
+            selectedGame: 'Mobile Legends',
             selectedProductId: null,
-            detailQty: 1,
-            catalogSearch: '',
             catalogCategory: 'Semua',
             paymentMethod: 'QRIS Instant (All Apps)',
         };
@@ -300,7 +282,8 @@
 
         async function navigateTo(view, params = {}) {
             state.currentView = view;
-            if (params.productId) { state.selectedProductId = params.productId; state.detailQty = 1; }
+            if (params.game) state.selectedGame = params.game;
+            if (params.productId) state.selectedProductId = params.productId;
             if (params.category) state.catalogCategory = params.category;
             window.scrollTo({ top: 0, behavior: 'smooth' });
             updateNavbarState();
@@ -318,11 +301,6 @@
                     el.classList.add('text-slate-300');
                 }
             });
-
-            const cart = DB.getCart();
-            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
-            const badge = document.getElementById('nav-cart-badge');
-            if (badge) badge.textContent = totalQty;
 
             const session = DB.getSession();
             const authArea = document.getElementById('nav-auth-area');
@@ -367,8 +345,7 @@
 
             switch (state.currentView) {
                 case 'home': root.innerHTML = await renderHomeView(); break;
-                case 'catalog': root.innerHTML = await renderCatalogView(); break;
-                case 'product-detail': root.innerHTML = await renderProductDetailView(); break;
+                case 'catalog': root.innerHTML = await renderGameStoreView(); break;
                 case 'customer-dashboard': root.innerHTML = await renderCustomerDashboardView(); break;
                 case 'admin-dashboard': root.innerHTML = await renderAdminDashboardView(); break;
                 case 'database': root.innerHTML = await renderDatabaseView(); break;
@@ -394,7 +371,7 @@
                                     Top Up Diamond & Voucher <span class="text-violet-400">Game Termurah</span>
                                 </h1>
                                 <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                                    Pusat top-up game online terlengkap dengan pembayaran instan QRIS, E-Wallet, dan Transfer Bank.
+                                    Pilih game favoritmu dan lakukan top up instan secara aman dan terpercaya.
                                 </p>
                                 <button onclick="navigateTo('catalog')" class="px-6 py-3 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-display font-bold text-xs shadow-lg shadow-violet-600/30 transition-all">Pilih Game Sekarang</button>
                             </div>
@@ -405,123 +382,116 @@
                     </section>
 
                     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <h2 class="font-display font-bold text-xl text-white mb-6 flex items-center gap-2"><i data-lucide="Flame" class="w-5 h-5 text-amber-400"></i> Pilih Game Favoritmu</h2>
+                        <h2 class="font-display font-bold text-xl text-white mb-6 flex items-center gap-2"><i data-lucide="Flame" class="w-5 h-5 text-amber-400"></i> Pilih Game untuk Top Up</h2>
                         <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
                             ${games.map(game => `
-                                <button onclick="navigateTo('catalog', {category: '${game}'})" class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-violet-500 hover:shadow-lg transition-all text-left group flex flex-col justify-between h-36">
+                                <button onclick="navigateTo('catalog', {game: '${game}'})" class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-violet-500 hover:shadow-lg transition-all text-left group flex flex-col justify-between h-36">
                                     <div class="w-10 h-10 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center group-hover:bg-violet-600 group-hover:text-white transition-colors">
                                         <i data-lucide="gamepad" class="w-5 h-5"></i>
                                     </div>
                                     <div>
                                         <h3 class="font-display font-bold text-sm text-white group-hover:text-violet-400">${game}</h3>
-                                        <span class="text-[10px] text-slate-400">Instant Top Up</span>
+                                        <span class="text-[10px] text-slate-400">Klik untuk Top Up</span>
                                     </div>
                                 </button>
                             `).join('')}
                         </div>
                     </section>
-
-                    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <h2 class="font-display font-bold text-xl text-white mb-6">🔥 Item & Nominal Terlaris</h2>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                            ${products.map(p => renderGameCard(p)).join('')}
-                        </div>
-                    </section>
                 </div>
             `;
         }
 
-        function renderGameCard(p) {
-            return `
-                <div class="bg-slate-900 rounded-2xl border border-slate-800 hover:border-violet-500/50 shadow-lg overflow-hidden flex flex-col group">
-                    <div class="relative aspect-video overflow-hidden bg-slate-950">
-                        <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-80">
-                        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-violet-600 text-white text-[10px] font-bold">${p.category}</span>
-                    </div>
-                    <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
-                        <h3 onclick="navigateTo('product-detail', {productId: '${p.id}'})" class="font-display font-bold text-sm text-white cursor-pointer hover:text-violet-400 line-clamp-1">${p.name}</h3>
-                        <div class="flex items-center justify-between pt-2 border-t border-slate-800">
-                            <div>
-                                <div class="font-display font-extrabold text-sm text-violet-400">${formatRupiah(p.price)}</div>
-                                <span class="text-[10px] text-slate-500 line-through">${formatRupiah(p.originalPrice || p.price * 1.1)}</span>
-                            </div>
-                            <button onclick="navigateTo('product-detail', {productId: '${p.id}'})" class="px-3 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-md">Beli</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // 2. CATALOG VIEW
-        async function renderCatalogView() {
+        // 2. GAME STORE STOREFRONT VIEW (List Diamond per Game + Form UID + Pembayaran)
+        async function renderGameStoreView() {
             const products = await DB.getProducts();
-            const categories = ['Semua', ...new Set(products.map(p => p.category))];
-            const filtered = products.filter(p => state.catalogCategory === 'Semua' || p.category === state.catalogCategory);
+            const games = [...new Set(products.map(p => p.category))];
+            if (!games.includes(state.selectedGame)) state.selectedGame = games[0] || 'Mobile Legends';
+
+            const gameProducts = products.filter(p => p.category === state.selectedGame);
+            const session = DB.getSession() || (await DB.getUsers())[0];
 
             return `
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-                    <h1 class="font-display font-extrabold text-2xl text-white">Katalog Game & Voucher</h1>
-                    <div class="flex flex-wrap gap-2">
-                        ${categories.map(cat => `<button onclick="state.catalogCategory = '${cat}'; renderCurrentView();" class="px-4 py-2 rounded-xl text-xs font-semibold ${state.catalogCategory === cat ? 'bg-violet-600 text-white' : 'bg-slate-900 border border-slate-800 text-slate-300'}">${cat}</button>`).join('')}
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+                    <!-- Navigasi Pilih Game -->
+                    <div class="flex flex-wrap gap-2 pb-4 border-b border-slate-800">
+                        ${games.map(g => `<button onclick="state.selectedGame = '${g}'; renderCurrentView();" class="px-4 py-2 rounded-xl text-xs font-semibold ${state.selectedGame === g ? 'bg-violet-600 text-white shadow-lg' : 'bg-slate-900 border border-slate-800 text-slate-300 hover:border-violet-500'}">${g}</button>`).join('')}
                     </div>
-                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                        ${filtered.map(p => renderGameCard(p)).join('')}
+
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Kolom Kiri: 1. Masukkan Data Akun & 2. Pilih Nominal Diamond -->
+                        <div class="lg:col-span-2 space-y-8">
+                            <!-- Step 1: Input Data Akun -->
+                            <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-4">
+                                <h3 class="font-display font-bold text-sm text-white flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs">1</span> Masukkan Data Akun ${state.selectedGame}</h3>
+                                <div class="grid grid-cols-2 gap-4 text-xs">
+                                    <div><label class="block text-slate-400 mb-1">User ID / UID</label><input type="text" id="input-game-id" placeholder="Contoh: 12345678" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white"></div>
+                                    <div><label class="block text-slate-400 mb-1">Server / Zone ID</label><input type="text" id="input-game-server" placeholder="Contoh: (1234)" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white"></div>
+                                </div>
+                            </div>
+
+                            <!-- Step 2: List Diamond / Nominal Item -->
+                            <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-4">
+                                <h3 class="font-display font-bold text-sm text-white flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs">2</span> Pilih Nominal Top Up</h3>
+                                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                    ${gameProducts.map(p => `
+                                        <label onclick="state.selectedProductId = '${p.id}';" class="game-item-card p-4 rounded-2xl bg-slate-950 border border-slate-800 hover:border-violet-500 cursor-pointer flex flex-col justify-between transition-all relative">
+                                            <input type="radio" name="selected-item" value="${p.id}" ${state.selectedProductId === p.id ? 'checked' : ''} class="absolute top-3 right-3 text-violet-600">
+                                            <div class="space-y-1 pr-6">
+                                                <h4 class="font-display font-bold text-xs text-white">${p.name}</h4>
+                                                <span class="text-[10px] text-slate-400 block line-clamp-1">${p.description}</span>
+                                            </div>
+                                            <div class="pt-4 mt-2 border-t border-slate-900">
+                                                <span class="font-display font-extrabold text-sm text-violet-400">${formatRupiah(p.price)}</span>
+                                            </div>
+                                        </label>
+                                    `).join('')}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kolom Kanan: 3. Pembayaran & Konfirmasi -->
+                        <div class="space-y-6">
+                            <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 space-y-6 sticky top-24">
+                                <h3 class="font-display font-bold text-sm text-white flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs">3</span> Metode Pembayaran</h3>
+                                <div class="space-y-2 text-xs">
+                                    ${['QRIS Instant (All Apps)', 'Transfer Bank BCA', 'GoPay / OVO / Dana'].map(pay => `
+                                        <label class="flex items-center justify-between p-3 rounded-xl bg-slate-950 border border-slate-800 cursor-pointer">
+                                            <span class="font-bold text-white">${pay}</span>
+                                            <input type="radio" name="pay-method" ${state.paymentMethod===pay?'checked':''} onclick="state.paymentMethod='${pay}'" class="text-violet-600">
+                                        </label>
+                                    `).join('')}
+                                </div>
+
+                                <div class="pt-4 border-t border-slate-800 space-y-2 text-xs">
+                                    <div class="flex justify-between text-slate-400"><span>Pembeli</span><span class="font-bold text-white">${session.name}</span></div>
+                                    <div class="flex justify-between text-slate-400"><span>Game</span><span class="font-bold text-white">${state.selectedGame}</span></div>
+                                </div>
+
+                                <button onclick="processTopUpFromStore()" class="w-full py-4 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-display font-bold text-xs shadow-lg shadow-violet-600/30 transition-all">Bayar Sekarang</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             `;
         }
 
-        // 3. PRODUCT DETAIL & INPUT USER ID GAME
-        async function renderProductDetailView() {
-            const products = await DB.getProducts();
-            const p = products.find(prod => prod.id === state.selectedProductId) || products[0];
-
-            return `
-                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-                    <button onclick="navigateTo('catalog')" class="text-xs text-slate-400 hover:text-violet-400 flex items-center gap-1.5"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button>
-                    
-                    <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="space-y-4">
-                            <img src="${p.image}" class="w-full aspect-video rounded-2xl object-cover border border-slate-800">
-                            <h2 class="font-display font-bold text-lg text-white">${p.name}</h2>
-                            <p class="text-xs text-slate-400 leading-relaxed">${p.description}</p>
-                            <div class="font-display font-extrabold text-2xl text-violet-400">${formatRupiah(p.price)}</div>
-                        </div>
-
-                        <div class="md:col-span-2 space-y-6 bg-slate-950 p-6 rounded-2xl border border-slate-800">
-                            <h3 class="font-display font-bold text-sm text-white flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs">1</span> Masukkan Data Akun Game</h3>
-                            <div class="grid grid-cols-2 gap-4 text-xs">
-                                <div><label class="block text-slate-400 mb-1">User ID / UID</label><input type="text" id="input-game-id" placeholder="Contoh: 12345678" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white"></div>
-                                <div><label class="block text-slate-400 mb-1">Server / Zone ID</label><input type="text" id="input-game-server" placeholder="Contoh: (1234)" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white"></div>
-                            </div>
-
-                            <h3 class="font-display font-bold text-sm text-white flex items-center gap-2 pt-4"><span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs">2</span> Pilih Pembayaran</h3>
-                            <div class="space-y-2 text-xs">
-                                ${['QRIS Instant (All Apps)', 'Transfer Bank BCA', 'GoPay / OVO / Dana'].map(pay => `
-                                    <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer">
-                                        <span class="font-bold text-white">${pay}</span>
-                                        <input type="radio" name="pay-method" ${state.paymentMethod===pay?'checked':''} onclick="state.paymentMethod='${pay}'" class="text-violet-600">
-                                    </label>
-                                `).join('')}
-                            </div>
-
-                            <button onclick="processTopUp('${p.id}', '${p.name}', ${p.price})" class="w-full py-3.5 bg-violet-600 hover:bg-violet-700 text-white font-display font-bold text-xs rounded-xl shadow-lg shadow-violet-600/30">Top Up Sekarang</button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        async function processTopUp(prodId, prodName, price) {
-            const gameId = document.getElementById('input-game-id').value.trim();
-            const serverId = document.getElementById('input-game-server').value.trim();
+        async function processTopUpFromStore() {
+            const gameId = document.getElementById('input-game-id')?.value.trim();
+            const serverId = document.getElementById('input-game-server')?.value.trim();
 
             if (!gameId) {
                 showToast('Mohon masukkan User ID game Anda!', 'error');
                 return;
             }
+            if (!state.selectedProductId) {
+                showToast('Mohon pilih nominal diamond terlebih dahulu!', 'error');
+                return;
+            }
 
+            const products = await DB.getProducts();
+            const p = products.find(x => x.id === state.selectedProductId);
             const session = DB.getSession() || (await DB.getUsers())[0];
+
             const newTx = {
                 invoice: `INV-GAME-${Math.floor(1000 + Math.random() * 9000)}`,
                 userId: session.id,
@@ -530,21 +500,21 @@
                 shippingAddress: `UID: ${gameId} (${serverId || 'No Server'})`,
                 shippingMethod: 'Instant Game Delivery',
                 paymentMethod: state.paymentMethod,
-                items: [{ id: prodId, name: prodName, price, qty: 1, image: '' }],
-                subtotal: price,
+                items: [{ id: p.id, name: p.name, price: p.price, qty: 1, image: p.image }],
+                subtotal: p.price,
                 shippingCost: 0,
                 discount: 0,
-                total: price,
+                total: p.price,
                 status: 'Sukses (Masuk Otomatis)',
                 createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19)
             };
 
             await DB.saveTransaction(newTx);
-            showToast('Top Up Berhasil! Item telah dikirim ke akun game Anda.');
+            showToast(`Top Up ${p.name} Berhasil untuk UID ${gameId}!`);
             navigateTo('customer-dashboard');
         }
 
-        // 4. CUSTOMER DASHBOARD
+        // 3. CUSTOMER DASHBOARD
         async function renderCustomerDashboardView() {
             const session = DB.getSession() || (await DB.getUsers())[0];
             const transactions = await DB.getTransactions();
@@ -562,7 +532,8 @@
                             <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xs space-y-3 text-xs">
                                 <div class="flex justify-between font-bold text-white"><span>${t.invoice}</span>${getStatusBadge(t.status)}</div>
                                 <div class="text-slate-400">Akun / UID: <span class="text-violet-400 font-semibold">${t.shippingAddress}</span></div>
-                                <div class="text-slate-400">Total Bayar: <span class="font-bold text-white">${formatRupiah(t.total)}</span> (${t.createdAt})</div>
+                                <div class="text-slate-400">Item: <span class="text-white font-semibold">${t.items[0]?.name || 'Diamond'}</span></div>
+                                <div class="text-slate-400">Total: <span class="font-bold text-white">${formatRupiah(t.total)}</span> (${t.createdAt})</div>
                             </div>
                         `).join('')}
                     </div>
@@ -570,7 +541,7 @@
             `;
         }
 
-        // 5. ADMIN DASHBOARD
+        // 4. ADMIN DASHBOARD
         async function renderAdminDashboardView() {
             const products = await DB.getProducts();
 
@@ -650,7 +621,7 @@
             }
         }
 
-        // 6. DATABASE INSPECTOR VIEW
+        // 5. DATABASE INSPECTOR VIEW
         async function renderDatabaseView() {
             const users = await DB.getUsers();
             const products = await DB.getProducts();
