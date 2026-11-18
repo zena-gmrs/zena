@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PasarKita - Sistem Jual Beli E-Commerce Supabase Terintegrasi</title>
+    <title>PasarKita Games - Top Up Diamond & Voucher Game Terpercaya</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts: Plus Jakarta Sans & Inter -->
@@ -23,13 +23,17 @@
                         display: ['Plus Jakarta Sans', 'sans-serif'],
                     },
                     colors: {
-                        emerald: {
-                            50: '#ecfdf5',
-                            100: '#d1fae5',
-                            500: '#10b981',
-                            600: '#059669',
-                            700: '#047857',
-                            900: '#064e3b',
+                        violet: {
+                            50: '#f5f3ff',
+                            100: '#ede9fe',
+                            500: '#8b5cf6',
+                            600: '#7c3aed',
+                            700: '#6d28d9',
+                            900: '#4c1d95',
+                        },
+                        amber: {
+                            400: '#fbbf24',
+                            500: '#f59e0b',
                         }
                     }
                 }
@@ -37,86 +41,63 @@
         }
     </script>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased selection:bg-emerald-500 selection:text-white flex flex-col min-h-screen">
+<body class="bg-slate-950 text-slate-100 antialiased selection:bg-violet-500 selection:text-white flex flex-col min-h-screen">
 
     <!-- Toast Notification Container -->
     <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
 
     <!-- NAVBAR STICKY GLOBAL -->
-    <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+    <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-800 shadow-lg">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 sm:h-20 gap-3">
                 
                 <!-- Brand Logo -->
                 <button onclick="navigateTo('home')" class="flex items-center gap-2.5 shrink-0 group text-left">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center text-white shadow-md shadow-emerald-500/20 group-hover:scale-105 transition-transform">
-                        <i data-lucide="shopping-bag" class="w-5 h-5"></i>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-violet-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-violet-600/30 group-hover:scale-105 transition-transform">
+                        <i data-lucide="gamepad-2" class="w-5 h-5"></i>
                     </div>
                     <div class="flex flex-col">
-                        <span class="font-display font-extrabold text-xl tracking-tight text-slate-900 leading-none">Pasar<span class="text-emerald-600">Kita</span></span>
+                        <span class="font-display font-extrabold text-xl tracking-tight text-white leading-none">PasarKita<span class="text-violet-400">Games</span></span>
                         <span class="text-[10px] font-semibold text-slate-400 tracking-wider uppercase hidden sm:block">Supabase Cloud Ready</span>
                     </div>
                 </button>
 
-                <!-- Primary Navigation Links (Desktop) -->
-                <nav class="hidden lg:flex items-center gap-1 bg-slate-100/80 p-1 rounded-xl border border-slate-200/60">
-                    <button onclick="navigateTo('home')" data-nav="home" class="nav-link px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all">Beranda</button>
-                    <button onclick="navigateTo('catalog')" data-nav="catalog" class="nav-link px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all">Katalog Produk</button>
+                <!-- Primary Navigation Links -->
+                <nav class="hidden lg:flex items-center gap-1 bg-slate-800/80 p-1 rounded-xl border border-slate-700/60">
+                    <button onclick="navigateTo('home')" data-nav="home" class="nav-link px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all">Beranda Game</button>
+                    <button onclick="navigateTo('catalog')" data-nav="catalog" class="nav-link px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all">Semua Game</button>
                     <button onclick="navigateTo('database')" data-nav="database" class="nav-link px-3.5 py-1.5 rounded-lg text-xs font-semibold flex items-center gap-1.5 transition-all">
-                        <i data-lucide="database" class="w-3.5 h-3.5 text-emerald-600"></i> Supabase Inspector
+                        <i data-lucide="database" class="w-3.5 h-3.5 text-violet-400"></i> Supabase Inspector
                     </button>
                 </nav>
-
-                <!-- Search Bar Cepat (Desktop) -->
-                <div class="hidden md:flex flex-1 max-w-xs xl:max-w-sm">
-                    <div class="relative w-full">
-                        <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"></i>
-                        <input 
-                            type="text" 
-                            id="global-search-input"
-                            placeholder="Cari barang di katalog..." 
-                            onkeyup="if(event.key === 'Enter') handleGlobalSearch(this.value)"
-                            class="w-full pl-9 pr-3 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:bg-white focus:border-emerald-500 transition-all"
-                        >
-                    </div>
-                </div>
 
                 <!-- Right Action Controls -->
                 <div class="flex items-center gap-2 shrink-0">
                     <button 
                         onclick="quickSwitchAdmin()" 
-                        title="Akses Cepat Dashboard Admin"
-                        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-900 hover:bg-slate-800 text-white shadow-xs transition-all"
+                        title="Akses Admin Store"
+                        class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-violet-400 border border-violet-500/30 transition-all"
                     >
-                        <i data-lucide="shield" class="w-3.5 h-3.5 text-emerald-400"></i>
+                        <i data-lucide="shield" class="w-3.5 h-3.5"></i>
                         <span>Admin</span>
                     </button>
 
-                    <!-- Cart Button -->
+                    <!-- Cart / Cek Transaksi Button -->
                     <button 
                         onclick="navigateTo('cart')" 
                         data-nav="cart"
-                        class="nav-link relative p-2.5 rounded-xl text-slate-600 hover:text-emerald-600 hover:bg-emerald-50 transition-colors"
-                        aria-label="Keranjang Belanja"
+                        class="nav-link relative p-2.5 rounded-xl text-slate-300 hover:text-violet-400 hover:bg-slate-800 transition-colors"
+                        aria-label="Keranjang Top Up"
                     >
                         <i data-lucide="shopping-cart" class="w-5 h-5"></i>
-                        <span id="nav-cart-badge" class="absolute -top-1 -right-1 min-w-[20px] h-5 px-1.5 rounded-full bg-rose-500 text-white text-[11px] font-bold flex items-center justify-center shadow-sm">0</span>
+                        <span id="nav-cart-badge" class="absolute -top-1 -right-1 min-w-[20px] h-5 px-1.5 rounded-full bg-violet-600 text-white text-[11px] font-bold flex items-center justify-center shadow-sm">0</span>
                     </button>
 
-                    <div class="h-6 w-px bg-slate-200"></div>
+                    <div class="h-6 w-px bg-slate-800"></div>
 
                     <!-- User Account / Auth Area -->
                     <div id="nav-auth-area"></div>
                 </div>
-            </div>
-
-            <!-- Mobile Sub-Navigation Bar -->
-            <div class="flex lg:hidden items-center justify-between gap-1.5 pb-2.5 overflow-x-auto">
-                <button onclick="navigateTo('home')" data-nav="home" class="nav-link shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold">Beranda</button>
-                <button onclick="navigateTo('catalog')" data-nav="catalog" class="nav-link shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold">Katalog</button>
-                <button onclick="navigateTo('cart')" data-nav="cart" class="nav-link shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold">Keranjang</button>
-                <button onclick="quickSwitchAdmin()" class="shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 text-emerald-400">Admin</button>
-                <button onclick="navigateTo('database')" data-nav="database" class="nav-link shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold">Supabase DB</button>
             </div>
         </div>
     </header>
@@ -125,47 +106,40 @@
     <main id="app-root" class="flex-1"></main>
 
     <!-- FOOTER GLOBAL -->
-    <footer class="bg-slate-900 text-slate-300 border-t border-slate-800 mt-auto">
+    <footer class="bg-slate-900 text-slate-400 border-t border-slate-800 mt-auto">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                <div class="md:col-span-2 space-y-3">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <div class="space-y-3">
                     <div class="flex items-center gap-2.5">
-                        <div class="w-8 h-8 rounded-xl bg-emerald-500 flex items-center justify-center text-slate-950">
-                            <i data-lucide="shopping-bag" class="w-4 h-4"></i>
+                        <div class="w-8 h-8 rounded-xl bg-violet-600 flex items-center justify-center text-white">
+                            <i data-lucide="gamepad-2" class="w-4 h-4"></i>
                         </div>
-                        <span class="font-display font-extrabold text-lg text-white">Pasar<span class="text-emerald-400">Kita</span></span>
+                        <span class="font-display font-extrabold text-lg text-white">PasarKita<span class="text-violet-400">Games</span></span>
                     </div>
-                    <p class="text-xs sm:text-sm text-slate-400 max-w-md leading-relaxed">
-                        Platform e-commerce full-stack modern dengan arsitektur SPA, terhubung langsung ke database PostgreSQL Supabase cloud secara real-time.
+                    <p class="text-xs text-slate-400 leading-relaxed">
+                        Platform top up diamond, UC, dan voucher game resmi paling cepat, murah, dan aman terhubung ke Supabase Cloud.
                     </p>
                 </div>
-
                 <div>
-                    <h4 class="font-display font-bold text-white text-xs uppercase tracking-wider mb-3">Navigasi Modul</h4>
+                    <h4 class="font-display font-bold text-white text-xs uppercase tracking-wider mb-3">Game Populer</h4>
                     <ul class="space-y-2 text-xs text-slate-400">
-                        <li><button onclick="navigateTo('home')" class="hover:text-emerald-400">1. Homepage Customer</button></li>
-                        <li><button onclick="navigateTo('catalog')" class="hover:text-emerald-400">2. Katalog Produk</button></li>
-                        <li><button onclick="navigateTo('cart')" class="hover:text-emerald-400">3. Keranjang Belanja</button></li>
-                        <li><button onclick="navigateTo('checkout')" class="hover:text-emerald-400">4. Halaman Checkout</button></li>
+                        <li><button onclick="navigateTo('catalog')" class="hover:text-violet-400">Mobile Legends: Bang Bang</button></li>
+                        <li><button onclick="navigateTo('catalog')" class="hover:text-violet-400">PUBG Mobile</button></li>
+                        <li><button onclick="navigateTo('catalog')" class="hover:text-violet-400">Genshin Impact</button></li>
+                        <li><button onclick="navigateTo('catalog')" class="hover:text-violet-400">Free Fire</button></li>
                     </ul>
                 </div>
-
                 <div>
-                    <h4 class="font-display font-bold text-white text-xs uppercase tracking-wider mb-3">Akun & Sistem</h4>
+                    <h4 class="font-display font-bold text-white text-xs uppercase tracking-wider mb-3">Sistem & Database</h4>
                     <ul class="space-y-2 text-xs text-slate-400">
-                        <li><button onclick="navigateTo('auth')" class="hover:text-emerald-400">5. Login & Register</button></li>
-                        <li><button onclick="navigateTo('customer-dashboard')" class="hover:text-emerald-400">6. Dashboard Customer</button></li>
-                        <li><button onclick="quickSwitchAdmin()" class="hover:text-emerald-400">7. Dashboard Admin Toko</button></li>
-                        <li><button onclick="navigateTo('database')" class="hover:text-emerald-400">8. Supabase Inspector</button></li>
+                        <li><button onclick="navigateTo('customer-dashboard')" class="hover:text-violet-400">Riwayat Pesanan Top Up</button></li>
+                        <li><button onclick="navigateTo('database')" class="hover:text-violet-400">Supabase Inspector</button></li>
+                        <li><button onclick="quickSwitchAdmin()" class="hover:text-violet-400">Dashboard Admin Store</button></li>
                     </ul>
                 </div>
             </div>
-
-            <div class="border-t border-slate-800 mt-8 pt-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
-                <p>&copy; 2026 PasarKita E-Commerce System. Powered by Supabase & Tailwind CSS.</p>
-                <div class="flex items-center gap-3">
-                    <button onclick="navigateTo('database')" class="text-emerald-400 hover:underline font-medium">Buka Database Inspector</button>
-                </div>
+            <div class="border-t border-slate-800 mt-8 pt-6 text-center text-xs text-slate-500">
+                <p>&copy; 2026 PasarKita Games. All rights reserved. Powered by Supabase & Tailwind CSS.</p>
             </div>
         </div>
     </footer>
@@ -179,18 +153,19 @@
         const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
         const DEFAULT_USERS = [
-            { id: 'USR-001', name: 'Budi Santoso', email: 'budi@pasarkita.id', password: '123', role: 'customer', phone: '0812-3456-7890', address: 'Jl. Margonda Raya No. 88, Beji' },
-            { id: 'USR-002', name: 'Admin Toko PasarKita', email: 'admin@pasarkita.id', password: '123', role: 'admin', phone: '0811-9999-0000', address: 'Menara PasarKita Lt. 12, Sudirman' }
+            { id: 'USR-001', name: 'Rian Gamer', email: 'rian@pasarkita.id', password: '123', role: 'customer', phone: '0812-3456-7890', address: 'Bandung' },
+            { id: 'USR-002', name: 'Admin Store Games', email: 'admin@pasarkita.id', password: '123', role: 'admin', phone: '0811-9999-0000', address: 'Jakarta' }
         ];
 
         const DEFAULT_PRODUCTS = [
-            { id: 'PRD-101', name: 'Sony WH-1000XM5 Wireless Headphone', category: 'Elektronik', price: 4299000, original_price: 5499000, stock: 15, sold: 142, condition: 'Baru', rating: 4.9, seller: 'Sony Audio Official', location: 'Jakarta Selatan', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=800&q=80', description: 'Headphone nirkabel flagship dengan Active Noise Cancelling.' },
-            { id: 'PRD-102', name: 'Sepatu Lari AeroRun Ultralight Emerald', category: 'Fashion', price: 489000, original_price: 750000, stock: 28, sold: 310, condition: 'Baru', rating: 4.8, seller: 'AeroSport Indonesia', location: 'Bandung', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80', description: 'Sepatu lari jarak jauh dengan midsole empuk.' },
-            { id: 'PRD-103', name: 'Kopi Arabika Gayo Wine Single Origin 500g', category: 'Kuliner & Snack', price: 135000, original_price: 175000, stock: 40, sold: 520, condition: 'Baru', rating: 4.9, seller: 'Roastery Nusantara', location: 'Banda Aceh', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1559056199-641a0ac8b55e?auto=format&fit=crop&w=800&q=80', description: 'Biji kopi Arabika pilihan dari ketinggian 1.600 mdpl Aceh Gayo.' },
-            { id: 'PRD-104', name: 'Mechanical Keyboard Wireless 75%', category: 'Hobi & Gaming', price: 849000, original_price: 1150000, stock: 12, sold: 98, condition: 'Baru', rating: 4.9, seller: 'KeyCraft Studio', location: 'Jakarta Barat', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=800&q=80', description: 'Keyboard mekanikal kustom gasket mount.' }
+            { id: 'PRD-ML-01', name: '86 Diamond (78 + 8 Bonus)', category: 'Mobile Legends', price: 20000, original_price: 23000, stock: 999, sold: 4500, condition: 'Instant', rating: 4.9, seller: 'Official Moonton Partner', location: 'Global', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80', description: 'Top up Diamond Mobile Legends resmi, cepat, dan otomatis masuk dalam 1 detik.' },
+            { id: 'PRD-ML-02', name: '257 Diamond (240 + 17 Bonus)', category: 'Mobile Legends', price: 60000, original_price: 70000, stock: 999, sold: 2300, condition: 'Instant', rating: 5.0, seller: 'Official Moonton Partner', location: 'Global', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80', description: 'Paket sultan diamond ML untuk beli skin Epic / Collector.' },
+            { id: 'PRD-PUBG-01', name: '660 UC PUBG Mobile', category: 'PUBG Mobile', price: 145000, original_price: 160000, stock: 999, sold: 1200, condition: 'Instant', rating: 4.8, seller: 'Tencent Games', location: 'Global', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=800&q=80', description: 'Unknown Cash (UC) resmi PUBG Mobile untuk Royale Pass.' },
+            { id: 'PRD-GEN-01', name: '300 Genesis Crystal Genshin', category: 'Genshin Impact', price: 79000, original_price: 89000, stock: 999, sold: 890, condition: 'Instant', rating: 4.9, seller: 'HoYoverse Partner', location: 'Global', is_flash_sale: true, image: 'https://images.unsplash.com/photo-1538481199705-c710c4e965fc?auto=format&fit=crop&w=800&q=80', description: 'Genesis Crystal langsung masuk via UID untuk gacha karakter.' },
+            { id: 'PRD-FF-01', name: '140 Diamond Free Fire', category: 'Free Fire', price: 19000, original_price: 22000, stock: 999, sold: 3400, condition: 'Instant', rating: 4.7, seller: 'Garena Official', location: 'Global', is_flash_sale: false, image: 'https://images.unsplash.com/photo-1560253023-3ec5d502959f?auto=format&fit=crop&w=800&q=80', description: 'Diamond Free Fire aman 100% legal.' }
         ];
 
-        // DATABASE LAYER (SUPABASE + LOCALSTORAGE CACHE)
+        // DATABASE LAYER (SUPABASE)
         const DB = {
             async init() {
                 try {
@@ -202,11 +177,11 @@
                     if (!usrs || usrs.length === 0) {
                         await supabaseClient.from('users').insert(DEFAULT_USERS);
                     }
-                    if (!localStorage.getItem('pasarkita_db_cart_v1')) {
-                        localStorage.setItem('pasarkita_db_cart_v1', JSON.stringify([{ productId: 'PRD-101', qty: 1, selected: true }]));
+                    if (!localStorage.getItem('pasarkitagames_cart_v1')) {
+                        localStorage.setItem('pasarkitagames_cart_v1', JSON.stringify([{ productId: 'PRD-ML-01', qty: 1, selected: true }]));
                     }
-                    if (!localStorage.getItem('pasarkita_db_session_v1')) {
-                        localStorage.setItem('pasarkita_db_session_v1', JSON.stringify(DEFAULT_USERS[0]));
+                    if (!localStorage.getItem('pasarkitagames_session_v1')) {
+                        localStorage.setItem('pasarkitagames_session_v1', JSON.stringify(DEFAULT_USERS[0]));
                     }
                 } catch (err) {
                     console.error('Gagal inisialisasi Supabase:', err);
@@ -279,36 +254,28 @@
                 });
             },
 
-            getCart() { return JSON.parse(localStorage.getItem('pasarkita_db_cart_v1') || '[]'); },
-            saveCart(data) { localStorage.setItem('pasarkita_db_cart_v1', JSON.stringify(data)); updateNavbarState(); },
+            getCart() { return JSON.parse(localStorage.getItem('pasarkitagames_cart_v1') || '[]'); },
+            saveCart(data) { localStorage.setItem('pasarkitagames_cart_v1', JSON.stringify(data)); updateNavbarState(); },
 
             getSession() {
-                const raw = localStorage.getItem('pasarkita_db_session_v1');
+                const raw = localStorage.getItem('pasarkitagames_session_v1');
                 return raw ? JSON.parse(raw) : null;
             },
             saveSession(user) {
-                if (user) localStorage.setItem('pasarkita_db_session_v1', JSON.stringify(user));
-                else localStorage.removeItem('pasarkita_db_session_v1');
+                if (user) localStorage.setItem('pasarkitagames_session_v1', JSON.stringify(user));
+                else localStorage.removeItem('pasarkitagames_session_v1');
                 updateNavbarState();
             }
         };
 
-        // APPLICATION STATE & VIEW ROUTER
+        // APPLICATION STATE & ROUTER
         let state = {
             currentView: 'home',
             selectedProductId: null,
             detailQty: 1,
             catalogSearch: '',
             catalogCategory: 'Semua',
-            catalogCondition: 'Semua',
-            appliedVoucher: null,
-            shippingMethod: 'reguler',
-            paymentMethod: 'Transfer Bank BCA',
-            authTab: 'login',
-            customerTab: 'orders',
-            adminTab: 'products',
-            editingProductId: null,
-            dbTab: 'transactions'
+            paymentMethod: 'QRIS Instant (All Apps)',
         };
 
         function formatRupiah(num) {
@@ -319,7 +286,7 @@
             const container = document.getElementById('toast-container');
             const toast = document.createElement('div');
             const colors = type === 'error' ? 'bg-rose-950 border-rose-700 text-rose-100' : 'bg-slate-900 border-slate-700 text-white';
-            const dotColor = type === 'error' ? 'bg-rose-400' : 'bg-emerald-400';
+            const dotColor = type === 'error' ? 'bg-rose-400' : 'bg-violet-400';
             toast.className = `${colors} px-4 py-3 rounded-xl shadow-xl border text-xs sm:text-sm font-medium flex items-center gap-2.5 transform translate-y-2 opacity-0 transition-all duration-300 pointer-events-auto max-w-sm`;
             toast.innerHTML = `<span class="w-2 h-2 rounded-full ${dotColor} shrink-0"></span><span>${message}</span>`;
             container.appendChild(toast);
@@ -328,21 +295,13 @@
         }
 
         function getStatusBadge(status) {
-            const map = {
-                'Menunggu Pembayaran': 'bg-amber-50 text-amber-700 border-amber-200',
-                'Diproses': 'bg-blue-50 text-blue-700 border-blue-200',
-                'Dikirim': 'bg-purple-50 text-purple-700 border-purple-200',
-                'Selesai': 'bg-emerald-50 text-emerald-700 border-emerald-200',
-                'Dibatalkan': 'bg-rose-50 text-rose-700 border-rose-200'
-            };
-            return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border ${map[status] || 'bg-slate-100 text-slate-700 border-slate-200'}">${status}</span>`;
+            return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border bg-emerald-500/10 text-emerald-400 border-emerald-500/20">${status}</span>`;
         }
 
         async function navigateTo(view, params = {}) {
             state.currentView = view;
             if (params.productId) { state.selectedProductId = params.productId; state.detailQty = 1; }
             if (params.category) state.catalogCategory = params.category;
-            if (params.authTab) state.authTab = params.authTab;
             window.scrollTo({ top: 0, behavior: 'smooth' });
             updateNavbarState();
             await renderCurrentView();
@@ -352,11 +311,11 @@
             document.querySelectorAll('.nav-link').forEach(el => {
                 const target = el.dataset.nav;
                 if (target === state.currentView) {
-                    el.classList.add('bg-white', 'text-emerald-700', 'shadow-2xs');
-                    el.classList.remove('text-slate-600');
+                    el.classList.add('bg-slate-800', 'text-violet-400', 'shadow-xs');
+                    el.classList.remove('text-slate-300');
                 } else {
-                    el.classList.remove('bg-white', 'text-emerald-700', 'shadow-2xs');
-                    el.classList.add('text-slate-600');
+                    el.classList.remove('bg-slate-800', 'text-violet-400', 'shadow-xs');
+                    el.classList.add('text-slate-300');
                 }
             });
 
@@ -371,27 +330,17 @@
                 if (session) {
                     authArea.innerHTML = `
                         <div class="flex items-center gap-2">
-                            <button onclick="navigateTo('customer-dashboard')" class="flex items-center gap-2 px-2.5 py-1.5 rounded-xl hover:bg-slate-100 transition-colors text-left">
-                                <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-xs">
+                            <button onclick="navigateTo('customer-dashboard')" class="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-slate-900 border border-slate-800 hover:bg-slate-800 transition-colors text-left">
+                                <div class="w-7 h-7 rounded-full bg-violet-600 text-white font-bold flex items-center justify-center text-xs">
                                     ${session.name.charAt(0)}
                                 </div>
-                                <div class="hidden xl:flex flex-col">
-                                    <span class="text-xs font-bold text-slate-900 leading-tight">${session.name.split(' ')[0]}</span>
-                                    <span class="text-[10px] text-emerald-600 font-medium uppercase">${session.role}</span>
-                                </div>
+                                <span class="text-xs font-bold text-white hidden sm:inline">${session.name.split(' ')[0]}</span>
                             </button>
-                            <button onclick="handleLogout()" title="Keluar Akun" class="p-2 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition-colors">
-                                <i data-lucide="log-out" class="w-4 h-4"></i>
-                            </button>
+                            <button onclick="handleLogout()" title="Keluar" class="p-2 text-slate-400 hover:text-rose-400 rounded-lg hover:bg-slate-800"><i data-lucide="log-out" class="w-4 h-4"></i></button>
                         </div>
                     `;
                 } else {
-                    authArea.innerHTML = `
-                        <div class="flex items-center gap-1.5">
-                            <button onclick="navigateTo('auth', {authTab: 'login'})" class="px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 hover:text-emerald-600">Masuk</button>
-                            <button onclick="navigateTo('auth', {authTab: 'register'})" class="px-3.5 py-2 rounded-xl text-xs font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm">Daftar</button>
-                        </div>
-                    `;
+                    authArea.innerHTML = `<button onclick="navigateTo('customer-dashboard')" class="px-4 py-2 rounded-xl text-xs font-semibold bg-violet-600 hover:bg-violet-700 text-white shadow-md">Masuk</button>`;
                 }
             }
             if (typeof lucide !== 'undefined') lucide.createIcons();
@@ -401,22 +350,17 @@
             const users = await DB.getUsers();
             const admin = users.find(u => u.role === 'admin') || users[1];
             DB.saveSession(admin);
-            showToast('Beralih ke mode Admin Toko (Supabase)');
+            showToast('Beralih ke Admin Store Games');
             navigateTo('admin-dashboard');
         }
 
         function handleLogout() {
             DB.saveSession(null);
-            showToast('Berhasil keluar akun');
+            showToast('Berhasil keluar');
             navigateTo('home');
         }
 
-        function handleGlobalSearch(query) {
-            state.catalogSearch = query;
-            navigateTo('catalog');
-        }
-
-        // VIEW RENDERERS DISPATCHER
+        // VIEW DISPATCHER
         async function renderCurrentView() {
             const root = document.getElementById('app-root');
             if (!root) return;
@@ -425,9 +369,6 @@
                 case 'home': root.innerHTML = await renderHomeView(); break;
                 case 'catalog': root.innerHTML = await renderCatalogView(); break;
                 case 'product-detail': root.innerHTML = await renderProductDetailView(); break;
-                case 'cart': root.innerHTML = await renderCartView(); break;
-                case 'checkout': root.innerHTML = await renderCheckoutView(); break;
-                case 'auth': root.innerHTML = renderAuthView(); break;
                 case 'customer-dashboard': root.innerHTML = await renderCustomerDashboardView(); break;
                 case 'admin-dashboard': root.innerHTML = await renderAdminDashboardView(); break;
                 case 'database': root.innerHTML = await renderDatabaseView(); break;
@@ -439,68 +380,72 @@
         // 1. HOME VIEW
         async function renderHomeView() {
             const products = await DB.getProducts();
-            const flashSales = products.filter(p => p.isFlashSale);
+            const games = [...new Set(products.map(p => p.category))];
 
             return `
-                <div class="space-y-10 pb-16">
-                    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
-                        <div class="relative rounded-3xl bg-gradient-to-r from-emerald-900 via-emerald-800 to-teal-900 text-white overflow-hidden shadow-2xl p-8 sm:p-12 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div class="space-y-12 pb-16">
+                    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+                        <div class="relative rounded-3xl bg-gradient-to-r from-violet-900 via-indigo-950 to-slate-900 text-white overflow-hidden shadow-2xl p-8 sm:p-12 border border-violet-500/20 flex flex-col md:flex-row items-center justify-between gap-8">
                             <div class="relative z-10 max-w-xl space-y-4 text-center md:text-left">
-                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/20 border border-emerald-400/30 text-emerald-300 text-xs font-semibold">
-                                    <i data-lucide="cloud" class="w-3.5 h-3.5"></i> Terhubung ke Supabase Cloud DB
+                                <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-violet-500/20 border border-violet-400/30 text-violet-300 text-xs font-semibold">
+                                    <i data-lucide="zap" class="w-3.5 h-3.5"></i> Proses Kilat 1 Detik • Legal 100%
                                 </div>
                                 <h1 class="font-display font-extrabold text-3xl sm:text-5xl tracking-tight leading-tight">
-                                    Belanja <span class="text-emerald-400">E-Commerce Fullstack</span> via Supabase
+                                    Top Up Diamond & Voucher <span class="text-violet-400">Game Termurah</span>
                                 </h1>
                                 <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                                    Data katalog, user, dan transaksi kini tersimpan aman di database relasional PostgreSQL cloud.
+                                    Pusat top-up game online terlengkap dengan pembayaran instan QRIS, E-Wallet, dan Transfer Bank.
                                 </p>
-                                <div class="pt-2 flex flex-wrap items-center justify-center md:justify-start gap-3">
-                                    <button onclick="navigateTo('catalog')" class="px-6 py-3 rounded-2xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-display font-bold text-xs shadow-lg">Jelajahi Katalog</button>
-                                    <button onclick="quickSwitchAdmin()" class="px-6 py-3 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/20 text-white font-display font-bold text-xs">Panel Admin</button>
-                                </div>
+                                <button onclick="navigateTo('catalog')" class="px-6 py-3 rounded-2xl bg-violet-600 hover:bg-violet-700 text-white font-display font-bold text-xs shadow-lg shadow-violet-600/30 transition-all">Pilih Game Sekarang</button>
                             </div>
-                            <div class="relative z-10 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl border border-white/10">
-                                <img src="https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=800&q=80" alt="Banner" class="w-full h-64 object-cover">
+                            <div class="relative z-10 w-full max-w-md rounded-2xl overflow-hidden shadow-2xl border border-violet-500/20">
+                                <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=800&q=80" alt="Gaming Setup" class="w-full h-64 object-cover">
                             </div>
                         </div>
                     </section>
 
                     <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                        <div class="flex items-center justify-between mb-6">
-                            <div class="flex items-center gap-2">
-                                <div class="w-8 h-8 rounded-lg bg-rose-500 text-white flex items-center justify-center font-bold text-xs">⚡</div>
-                                <h2 class="font-display font-bold text-lg sm:text-xl text-slate-900">Flash Sale Cloud</h2>
-                            </div>
-                            <button onclick="navigateTo('catalog')" class="text-xs font-bold text-emerald-600 hover:underline">Lihat Katalog</button>
+                        <h2 class="font-display font-bold text-xl text-white mb-6 flex items-center gap-2"><i data-lucide="Flame" class="w-5 h-5 text-amber-400"></i> Pilih Game Favoritmu</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                            ${games.map(game => `
+                                <button onclick="navigateTo('catalog', {category: '${game}'})" class="p-6 rounded-2xl bg-slate-900 border border-slate-800 hover:border-violet-500 hover:shadow-lg transition-all text-left group flex flex-col justify-between h-36">
+                                    <div class="w-10 h-10 rounded-xl bg-violet-500/10 text-violet-400 flex items-center justify-center group-hover:bg-violet-600 group-hover:text-white transition-colors">
+                                        <i data-lucide="gamepad" class="w-5 h-5"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="font-display font-bold text-sm text-white group-hover:text-violet-400">${game}</h3>
+                                        <span class="text-[10px] text-slate-400">Instant Top Up</span>
+                                    </div>
+                                </button>
+                            `).join('')}
                         </div>
+                    </section>
+
+                    <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h2 class="font-display font-bold text-xl text-white mb-6">🔥 Item & Nominal Terlaris</h2>
                         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                            ${flashSales.map(p => renderProductCard(p)).join('')}
+                            ${products.map(p => renderGameCard(p)).join('')}
                         </div>
                     </section>
                 </div>
             `;
         }
 
-        function renderProductCard(p) {
-            const disc = p.originalPrice > p.price ? Math.round(((p.originalPrice - p.price) / p.originalPrice) * 100) : 0;
+        function renderGameCard(p) {
             return `
-                <div class="bg-white rounded-2xl border border-slate-200/80 shadow-xs hover:shadow-lg transition-all overflow-hidden flex flex-col group">
-                    <div class="relative aspect-square overflow-hidden bg-slate-100">
-                        <img src="${p.image}" alt="${p.name}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                        ${disc > 0 ? `<span class="absolute top-3 left-3 px-2 py-1 rounded-lg bg-rose-500 text-white text-[10px] font-bold">-${disc}%</span>` : ''}
+                <div class="bg-slate-900 rounded-2xl border border-slate-800 hover:border-violet-500/50 shadow-lg overflow-hidden flex flex-col group">
+                    <div class="relative aspect-video overflow-hidden bg-slate-950">
+                        <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300 opacity-80">
+                        <span class="absolute top-2 left-2 px-2 py-0.5 rounded-md bg-violet-600 text-white text-[10px] font-bold">${p.category}</span>
                     </div>
                     <div class="p-4 flex-1 flex flex-col justify-between space-y-3">
-                        <div class="space-y-1">
-                            <span class="text-[10px] font-semibold text-emerald-600 uppercase tracking-wider">${p.category}</span>
-                            <h3 onclick="navigateTo('product-detail', {productId: '${p.id}'})" class="font-display font-bold text-xs sm:text-sm text-slate-900 line-clamp-2 cursor-pointer hover:text-emerald-600">${p.name}</h3>
-                        </div>
-                        <div class="space-y-2">
-                            <div class="font-display font-extrabold text-sm sm:text-base text-slate-900">${formatRupiah(p.price)}</div>
-                            <div class="flex items-center justify-between pt-2 border-t border-slate-100 text-[11px] text-slate-500">
-                                <span class="flex items-center gap-1"><i data-lucide="star" class="w-3.5 h-3.5 text-amber-500 fill-amber-500"></i> ${p.rating} (${p.sold})</span>
-                                <button onclick="addToCart('${p.id}', 1)" class="px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-600 hover:text-white text-emerald-700 font-semibold transition-colors">+ Keranjang</button>
+                        <h3 onclick="navigateTo('product-detail', {productId: '${p.id}'})" class="font-display font-bold text-sm text-white cursor-pointer hover:text-violet-400 line-clamp-1">${p.name}</h3>
+                        <div class="flex items-center justify-between pt-2 border-t border-slate-800">
+                            <div>
+                                <div class="font-display font-extrabold text-sm text-violet-400">${formatRupiah(p.price)}</div>
+                                <span class="text-[10px] text-slate-500 line-through">${formatRupiah(p.originalPrice || p.price * 1.1)}</span>
                             </div>
+                            <button onclick="navigateTo('product-detail', {productId: '${p.id}'})" class="px-3 py-2 rounded-xl bg-violet-600 hover:bg-violet-700 text-white text-xs font-semibold shadow-md">Beli</button>
                         </div>
                     </div>
                 </div>
@@ -511,201 +456,95 @@
         async function renderCatalogView() {
             const products = await DB.getProducts();
             const categories = ['Semua', ...new Set(products.map(p => p.category))];
-
-            const filtered = products.filter(p => {
-                const matchSearch = p.name.toLowerCase().includes(state.catalogSearch.toLowerCase()) || p.category.toLowerCase().includes(state.catalogSearch.toLowerCase());
-                const matchCat = state.catalogCategory === 'Semua' || p.category === state.catalogCategory;
-                const matchCond = state.catalogCondition === 'Semua' || p.condition === state.catalogCondition;
-                return matchSearch && matchCat && matchCond;
-            });
+            const filtered = products.filter(p => state.catalogCategory === 'Semua' || p.category === state.catalogCategory);
 
             return `
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-xs">
-                        <div>
-                            <h1 class="font-display font-extrabold text-xl text-slate-900">Katalog Produk Supabase</h1>
-                            <p class="text-xs text-slate-500 mt-0.5">Menampilkan ${filtered.length} produk dari database cloud.</p>
-                        </div>
-                        <input type="text" placeholder="Cari produk..." value="${state.catalogSearch}" oninput="state.catalogSearch = this.value; renderCurrentView();" class="px-3.5 py-2 bg-slate-100 border border-slate-200 rounded-xl text-xs focus:bg-white focus:border-emerald-500">
+                    <h1 class="font-display font-extrabold text-2xl text-white">Katalog Game & Voucher</h1>
+                    <div class="flex flex-wrap gap-2">
+                        ${categories.map(cat => `<button onclick="state.catalogCategory = '${cat}'; renderCurrentView();" class="px-4 py-2 rounded-xl text-xs font-semibold ${state.catalogCategory === cat ? 'bg-violet-600 text-white' : 'bg-slate-900 border border-slate-800 text-slate-300'}">${cat}</button>`).join('')}
                     </div>
-                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
-                        <div class="space-y-4">
-                            <h3 class="font-display font-bold text-sm text-slate-900 uppercase tracking-wider">Kategori</h3>
-                            <div class="flex flex-col space-y-1">
-                                ${categories.map(cat => `<button onclick="state.catalogCategory = '${cat}'; renderCurrentView();" class="px-4 py-2.5 rounded-xl text-xs font-semibold text-left transition-colors ${state.catalogCategory === cat ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white hover:bg-slate-100 text-slate-700 border border-slate-200'}">${cat}</button>`).join('')}
-                            </div>
-                        </div>
-                        <div class="lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                            ${filtered.map(p => renderProductCard(p)).join('')}
-                        </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                        ${filtered.map(p => renderGameCard(p)).join('')}
                     </div>
                 </div>
             `;
         }
 
-        // 3. PRODUCT DETAIL VIEW
+        // 3. PRODUCT DETAIL & INPUT USER ID GAME
         async function renderProductDetailView() {
             const products = await DB.getProducts();
             const p = products.find(prod => prod.id === state.selectedProductId) || products[0];
 
             return `
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-                    <button onclick="navigateTo('catalog')" class="inline-flex items-center gap-2 text-xs font-semibold text-slate-600 hover:text-emerald-600"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xs">
-                        <div class="aspect-square rounded-2xl overflow-hidden bg-slate-100"><img src="${p.image}" class="w-full h-full object-cover"></div>
-                        <div class="space-y-6">
-                            <h1 class="font-display font-extrabold text-xl sm:text-2xl text-slate-900">${p.name}</h1>
-                            <div class="font-display font-extrabold text-2xl text-emerald-600">${formatRupiah(p.price)}</div>
-                            <p class="text-xs sm:text-sm text-slate-600 leading-relaxed">${p.description}</p>
-                            <div class="flex items-center gap-4">
-                                <div class="flex items-center border border-slate-200 rounded-xl bg-slate-50">
-                                    <button onclick="if(state.detailQty>1){state.detailQty--; renderCurrentView();}" class="px-3 py-2 font-bold">-</button>
-                                    <span class="px-4 text-xs font-bold">${state.detailQty}</span>
-                                    <button onclick="if(state.detailQty<p.stock){state.detailQty++; renderCurrentView();}" class="px-3 py-2 font-bold">+</button>
-                                </div>
-                                <button onclick="addToCart('${p.id}', state.detailQty)" class="flex-1 py-3 px-6 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md">Masukkan Keranjang</button>
-                            </div>
+                <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+                    <button onclick="navigateTo('catalog')" class="text-xs text-slate-400 hover:text-violet-400 flex items-center gap-1.5"><i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali</button>
+                    
+                    <div class="bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-800 shadow-xl grid grid-cols-1 md:grid-cols-3 gap-8">
+                        <div class="space-y-4">
+                            <img src="${p.image}" class="w-full aspect-video rounded-2xl object-cover border border-slate-800">
+                            <h2 class="font-display font-bold text-lg text-white">${p.name}</h2>
+                            <p class="text-xs text-slate-400 leading-relaxed">${p.description}</p>
+                            <div class="font-display font-extrabold text-2xl text-violet-400">${formatRupiah(p.price)}</div>
                         </div>
-                    </div>
-                </div>
-            `;
-        }
 
-        // 4. CART VIEW
-        async function addToCart(productId, qty) {
-            const cart = DB.getCart();
-            const existing = cart.find(i => i.productId === productId);
-            if (existing) existing.qty += qty;
-            else cart.push({ productId, qty, selected: true });
-            DB.saveCart(cart);
-            showToast('Produk ditambahkan ke keranjang!');
-        }
+                        <div class="md:col-span-2 space-y-6 bg-slate-950 p-6 rounded-2xl border border-slate-800">
+                            <h3 class="font-display font-bold text-sm text-white flex items-center gap-2"><span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs">1</span> Masukkan Data Akun Game</h3>
+                            <div class="grid grid-cols-2 gap-4 text-xs">
+                                <div><label class="block text-slate-400 mb-1">User ID / UID</label><input type="text" id="input-game-id" placeholder="Contoh: 12345678" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white"></div>
+                                <div><label class="block text-slate-400 mb-1">Server / Zone ID</label><input type="text" id="input-game-server" placeholder="Contoh: (1234)" class="w-full px-3.5 py-2.5 bg-slate-900 border border-slate-800 rounded-xl text-white"></div>
+                            </div>
 
-        async function renderCartView() {
-            const cart = DB.getCart();
-            const products = await DB.getProducts();
-            const items = cart.map(i => ({ ...i, product: products.find(p => p.id === i.productId) })).filter(i => i.product);
-            const selected = items.filter(i => i.selected);
-            const subtotal = selected.reduce((sum, i) => sum + (i.product.price * i.qty), 0);
-
-            return `
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-                    <h1 class="font-display font-extrabold text-xl sm:text-2xl text-slate-900">Keranjang Belanja</h1>
-                    ${items.length === 0 ? `<div class="bg-white p-12 rounded-3xl border text-center space-y-4"><h3 class="font-bold">Keranjang Kosong</h3><button onclick="navigateTo('catalog')" class="px-6 py-3 bg-emerald-600 text-white rounded-xl text-xs">Mulai Belanja</button></div>` : `
-                        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                            <div class="lg:col-span-2 space-y-4">
-                                ${items.map(i => `
-                                    <div class="bg-white p-4 rounded-2xl border flex items-center gap-4">
-                                        <input type="checkbox" ${i.selected?'checked':''} onchange="let c=DB.getCart(); c.find(x=>x.productId==='${i.productId}').selected=!c.find(x=>x.productId==='${i.productId}').selected; DB.saveCart(c); renderCurrentView();" class="w-4 h-4 text-emerald-600">
-                                        <img src="${i.product.image}" class="w-16 h-16 rounded-xl object-cover">
-                                        <div class="flex-1"><h3 class="font-bold text-xs">${i.product.name}</h3><div class="font-bold text-sm text-slate-900">${formatRupiah(i.product.price)}</div></div>
-                                        <span class="text-xs font-bold">Qty: ${i.qty}</span>
-                                    </div>
+                            <h3 class="font-display font-bold text-sm text-white flex items-center gap-2 pt-4"><span class="w-6 h-6 rounded-full bg-violet-600 text-white flex items-center justify-center text-xs">2</span> Pilih Pembayaran</h3>
+                            <div class="space-y-2 text-xs">
+                                ${['QRIS Instant (All Apps)', 'Transfer Bank BCA', 'GoPay / OVO / Dana'].map(pay => `
+                                    <label class="flex items-center justify-between p-3 rounded-xl bg-slate-900 border border-slate-800 cursor-pointer">
+                                        <span class="font-bold text-white">${pay}</span>
+                                        <input type="radio" name="pay-method" ${state.paymentMethod===pay?'checked':''} onclick="state.paymentMethod='${pay}'" class="text-violet-600">
+                                    </label>
                                 `).join('')}
                             </div>
-                            <div class="bg-white p-6 rounded-3xl border shadow-xs space-y-4">
-                                <h3 class="font-bold text-sm">Ringkasan</h3>
-                                <div class="flex justify-between font-extrabold text-sm pt-2 border-t"><span>Total</span><span>${formatRupiah(subtotal)}</span></div>
-                                <button onclick="navigateTo('checkout')" class="w-full py-3 bg-emerald-600 text-white rounded-xl text-xs font-bold">Lanjut Checkout</button>
-                            </div>
-                        </div>
-                    `}
-                </div>
-            `;
-        }
 
-        // 5. CHECKOUT VIEW
-        async function renderCheckoutView() {
-            const session = DB.getSession() || (await DB.getUsers())[0];
-            const cart = DB.getCart();
-            const products = await DB.getProducts();
-            const selected = cart.filter(i => i.selected).map(i => ({ ...i, product: products.find(p => p.id === i.productId) })).filter(i => i.product);
-            const subtotal = selected.reduce((sum, i) => sum + (i.product.price * i.qty), 0);
-
-            return `
-                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-                    <h1 class="font-display font-extrabold text-xl text-slate-900">Checkout Pengiriman</h1>
-                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                        <div class="lg:col-span-2 bg-white p-6 rounded-3xl border space-y-4 text-xs">
-                            <div><label class="block font-medium mb-1">Nama Penerima</label><input type="text" id="chk-name" value="${session.name}" class="w-full px-3 py-2 bg-slate-100 rounded-xl"></div>
-                            <div><label class="block font-medium mb-1">Alamat</label><textarea id="chk-address" class="w-full px-3 py-2 bg-slate-100 rounded-xl">${session.address || ''}</textarea></div>
-                        </div>
-                        <div class="bg-white p-6 rounded-3xl border space-y-4">
-                            <h3 class="font-bold text-sm">Total: ${formatRupiah(subtotal + 12000)}</h3>
-                            <button onclick="processCheckout(${subtotal})" class="w-full py-3 bg-emerald-600 text-white rounded-xl text-xs font-bold">Bayar Sekarang</button>
+                            <button onclick="processTopUp('${p.id}', '${p.name}', ${p.price})" class="w-full py-3.5 bg-violet-600 hover:bg-violet-700 text-white font-display font-bold text-xs rounded-xl shadow-lg shadow-violet-600/30">Top Up Sekarang</button>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        async function processCheckout(subtotal) {
-            const session = DB.getSession() || (await DB.getUsers())[0];
-            const cart = DB.getCart();
-            const products = await DB.getProducts();
-            const selected = cart.filter(i => i.selected).map(i => ({
-                id: i.productId,
-                name: products.find(p => p.id === i.productId)?.name || '',
-                price: products.find(p => p.id === i.productId)?.price || 0,
-                qty: i.qty,
-                image: products.find(p => p.id === i.productId)?.image || ''
-            }));
+        async function processTopUp(prodId, prodName, price) {
+            const gameId = document.getElementById('input-game-id').value.trim();
+            const serverId = document.getElementById('input-game-server').value.trim();
 
+            if (!gameId) {
+                showToast('Mohon masukkan User ID game Anda!', 'error');
+                return;
+            }
+
+            const session = DB.getSession() || (await DB.getUsers())[0];
             const newTx = {
-                invoice: `INV-SUPA-${Math.floor(1000 + Math.random() * 9000)}`,
+                invoice: `INV-GAME-${Math.floor(1000 + Math.random() * 9000)}`,
                 userId: session.id,
-                customerName: document.getElementById('chk-name').value,
-                phone: '0812345678',
-                shippingAddress: document.getElementById('chk-address').value,
-                shippingMethod: 'Reguler',
-                paymentMethod: 'Transfer BCA',
-                items: selected,
-                subtotal,
-                shippingCost: 12000,
+                customerName: session.name,
+                phone: session.phone || '0812345678',
+                shippingAddress: `UID: ${gameId} (${serverId || 'No Server'})`,
+                shippingMethod: 'Instant Game Delivery',
+                paymentMethod: state.paymentMethod,
+                items: [{ id: prodId, name: prodName, price, qty: 1, image: '' }],
+                subtotal: price,
+                shippingCost: 0,
                 discount: 0,
-                total: subtotal + 12000,
-                status: 'Diproses',
+                total: price,
+                status: 'Sukses (Masuk Otomatis)',
                 createdAt: new Date().toISOString().replace('T', ' ').substring(0, 19)
             };
 
             await DB.saveTransaction(newTx);
-            DB.saveCart(cart.filter(i => !i.selected));
-            showToast('Pesanan berhasil masuk Supabase Database!');
+            showToast('Top Up Berhasil! Item telah dikirim ke akun game Anda.');
             navigateTo('customer-dashboard');
         }
 
-        // 6. AUTH VIEW
-        function renderAuthView() {
-            return `
-                <div class="max-w-md mx-auto px-4 py-16">
-                    <div class="bg-white p-8 rounded-3xl border shadow-xl space-y-6 text-xs">
-                        <h1 class="font-extrabold text-xl text-center">Masuk PasarKita</h1>
-                        <form onsubmit="handleLoginSubmit(event)" class="space-y-4">
-                            <div><label class="block mb-1 font-medium">Email</label><input type="email" id="login-email" required class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl"></div>
-                            <div><label class="block mb-1 font-medium">Password</label><input type="password" id="login-password" required class="w-full px-3.5 py-2.5 bg-slate-100 rounded-xl"></div>
-                            <button type="submit" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl shadow-md">Masuk</button>
-                        </form>
-                    </div>
-                </div>
-            `;
-        }
-
-        async function handleLoginSubmit(e) {
-            e.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-password').value;
-            const users = await DB.getUsers();
-            const user = users.find(u => u.email === email && u.password === pass);
-            if (user) {
-                DB.saveSession(user);
-                showToast(`Selamat datang, ${user.name}!`);
-                navigateTo(user.role === 'admin' ? 'admin-dashboard' : 'home');
-            } else {
-                showToast('Email atau password salah!', 'error');
-            }
-        }
-
-        // 7. CUSTOMER DASHBOARD VIEW
+        // 4. CUSTOMER DASHBOARD
         async function renderCustomerDashboardView() {
             const session = DB.getSession() || (await DB.getUsers())[0];
             const transactions = await DB.getTransactions();
@@ -713,16 +552,17 @@
 
             return `
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-                    <div class="bg-white p-6 rounded-3xl border flex items-center justify-between">
-                        <div><h1 class="font-extrabold text-xl">${session.name}</h1><p class="text-xs text-slate-500">${session.email}</p></div>
-                        <button onclick="handleLogout()" class="px-4 py-2 bg-rose-50 text-rose-600 font-semibold text-xs rounded-xl">Keluar</button>
+                    <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 flex items-center justify-between">
+                        <div><h1 class="font-extrabold text-xl text-white">${session.name}</h1><p class="text-xs text-slate-400">${session.email}</p></div>
+                        <button onclick="handleLogout()" class="px-4 py-2 bg-rose-500/10 text-rose-400 font-semibold text-xs rounded-xl">Keluar</button>
                     </div>
                     <div class="space-y-4">
-                        <h2 class="font-bold text-lg">Riwayat Pesanan (Supabase)</h2>
-                        ${userTxs.map(t => `
-                            <div class="bg-white p-6 rounded-2xl border shadow-xs space-y-3 text-xs">
-                                <div class="flex justify-between font-bold"><span>${t.invoice}</span>${getStatusBadge(t.status)}</div>
-                                <div class="text-slate-500">Total: ${formatRupiah(t.total)} (${t.createdAt})</div>
+                        <h2 class="font-bold text-lg text-white">Riwayat Transaksi Top Up Game</h2>
+                        ${userTxs.length === 0 ? `<div class="bg-slate-900 p-12 rounded-2xl border border-slate-800 text-center text-xs text-slate-400">Belum ada riwayat top up.</div>` : userTxs.map(t => `
+                            <div class="bg-slate-900 p-6 rounded-2xl border border-slate-800 shadow-xs space-y-3 text-xs">
+                                <div class="flex justify-between font-bold text-white"><span>${t.invoice}</span>${getStatusBadge(t.status)}</div>
+                                <div class="text-slate-400">Akun / UID: <span class="text-violet-400 font-semibold">${t.shippingAddress}</span></div>
+                                <div class="text-slate-400">Total Bayar: <span class="font-bold text-white">${formatRupiah(t.total)}</span> (${t.createdAt})</div>
                             </div>
                         `).join('')}
                     </div>
@@ -730,27 +570,27 @@
             `;
         }
 
-        // 8. ADMIN DASHBOARD VIEW
+        // 5. ADMIN DASHBOARD
         async function renderAdminDashboardView() {
             const products = await DB.getProducts();
 
             return `
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
                     <div class="flex justify-between items-center">
-                        <h1 class="font-extrabold text-xl">Admin Dashboard (Supabase)</h1>
-                        <button onclick="state.editingProductId = 'new'; renderCurrentView();" class="px-4 py-2 bg-emerald-600 text-white rounded-xl text-xs font-bold">+ Tambah Produk</button>
+                        <h1 class="font-extrabold text-xl text-white">Admin Panel Store Games (Supabase)</h1>
+                        <button onclick="state.editingProductId = 'new'; renderCurrentView();" class="px-4 py-2 bg-violet-600 text-white rounded-xl text-xs font-bold">+ Tambah Item Game</button>
                     </div>
                     ${state.editingProductId ? renderProductFormModal() : ''}
-                    <div class="bg-white rounded-3xl border overflow-hidden">
+                    <div class="bg-slate-900 rounded-3xl border border-slate-800 overflow-hidden">
                         <table class="w-full text-left text-xs">
-                            <thead class="bg-slate-50 uppercase text-slate-400 font-semibold"><tr><th class="p-4">Produk</th><th class="p-4">Harga</th><th class="p-4">Stok</th><th class="p-4 text-right">Aksi</th></tr></thead>
-                            <tbody class="divide-y">
+                            <thead class="bg-slate-950 uppercase text-slate-400 font-semibold"><tr><th class="p-4">Game / Item</th><th class="p-4">Harga</th><th class="p-4">Stok</th><th class="p-4 text-right">Aksi</th></tr></thead>
+                            <tbody class="divide-y divide-slate-800">
                                 ${products.map(p => `
                                     <tr>
-                                        <td class="p-4 flex items-center gap-3"><img src="${p.image}" class="w-10 h-10 rounded-lg object-cover"><span class="font-bold">${p.name}</span></td>
-                                        <td class="p-4 font-bold">${formatRupiah(p.price)}</td>
-                                        <td class="p-4">${p.stock}</td>
-                                        <td class="p-4 text-right"><button onclick="deleteProduct('${p.id}')" class="px-3 py-1 bg-rose-50 text-rose-600 rounded-lg font-semibold">Hapus</button></td>
+                                        <td class="p-4 flex items-center gap-3"><img src="${p.image}" class="w-10 h-10 rounded-lg object-cover"><span class="font-bold text-white">${p.name}</span></td>
+                                        <td class="p-4 font-bold text-violet-400">${formatRupiah(p.price)}</td>
+                                        <td class="p-4 text-slate-300">${p.stock}</td>
+                                        <td class="p-4 text-right"><button onclick="deleteProduct('${p.id}')" class="px-3 py-1 bg-rose-500/10 text-rose-400 rounded-lg font-semibold">Hapus</button></td>
                                     </tr>
                                 `).join('')}
                             </tbody>
@@ -762,17 +602,15 @@
 
         function renderProductFormModal() {
             return `
-                <div class="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4">
-                    <div class="bg-white w-full max-w-lg rounded-3xl p-6 space-y-4 shadow-2xl text-xs">
-                        <h3 class="font-extrabold text-base">Tambah Produk Baru ke Supabase</h3>
+                <div class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-xs flex items-center justify-center p-4">
+                    <div class="bg-slate-900 w-full max-w-lg rounded-3xl p-6 space-y-4 shadow-2xl border border-slate-800 text-xs text-white">
+                        <h3 class="font-extrabold text-base">Tambah Item Game Baru</h3>
                         <form onsubmit="handleSaveProduct(event)" class="space-y-3">
-                            <div><label>Nama Produk</label><input type="text" id="p-name" required class="w-full px-3 py-2 bg-slate-100 rounded-xl"></div>
-                            <div><label>Kategori</label><input type="text" id="p-cat" required class="w-full px-3 py-2 bg-slate-100 rounded-xl"></div>
-                            <div><label>Harga (Rp)</label><input type="number" id="p-price" required class="w-full px-3 py-2 bg-slate-100 rounded-xl"></div>
-                            <div><label>Stok</label><input type="number" id="p-stock" required class="w-full px-3 py-2 bg-slate-100 rounded-xl"></div>
-                            <div><label>URL Gambar</label><input type="url" id="p-img" required class="w-full px-3 py-2 bg-slate-100 rounded-xl"></div>
-                            <div><label>Deskripsi</label><textarea id="p-desc" class="w-full px-3 py-2 bg-slate-100 rounded-xl"></textarea></div>
-                            <button type="submit" class="w-full py-3 bg-emerald-600 text-white font-bold rounded-xl">Simpan ke Supabase</button>
+                            <div><label>Nama Item (Cth: 172 Diamond)</label><input type="text" id="p-name" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white"></div>
+                            <div><label>Game (Cth: Mobile Legends)</label><input type="text" id="p-cat" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white"></div>
+                            <div><label>Harga (Rp)</label><input type="number" id="p-price" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white"></div>
+                            <div><label>URL Gambar Banner</label><input type="url" id="p-img" required class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-xl text-white"></div>
+                            <button type="submit" class="w-full py-3 bg-violet-600 text-white font-bold rounded-xl">Simpan ke Supabase</button>
                         </form>
                     </div>
                 </div>
@@ -782,37 +620,37 @@
         async function handleSaveProduct(e) {
             e.preventDefault();
             const newProd = {
-                id: `PRD-${Math.floor(300 + Math.random() * 700)}`,
+                id: `PRD-GAME-${Math.floor(300 + Math.random() * 700)}`,
                 name: document.getElementById('p-name').value,
                 category: document.getElementById('p-cat').value,
                 price: Number(document.getElementById('p-price').value),
-                original_price: Number(document.getElementById('p-price').value) * 1.2,
-                stock: Number(document.getElementById('p-stock').value),
+                original_price: Number(document.getElementById('p-price').value) * 1.1,
+                stock: 999,
                 sold: 0,
-                condition: 'Baru',
+                condition: 'Instant',
                 rating: 5.0,
-                seller: 'Admin PasarKita',
-                location: 'Depok',
-                is_flash_sale: false,
+                seller: 'Official Store',
+                location: 'Global',
+                is_flash_sale: true,
                 image: document.getElementById('p-img').value,
-                description: document.getElementById('p-desc').value
+                description: 'Top up instan otomatis masuk.'
             };
 
             await supabaseClient.from('products').insert(newProd);
             state.editingProductId = null;
-            showToast('Produk berhasil disimpan ke Supabase!');
+            showToast('Item game berhasil ditambahkan!');
             navigateTo('admin-dashboard');
         }
 
         async function deleteProduct(id) {
-            if (confirm('Hapus produk dari Supabase?')) {
+            if (confirm('Hapus item game ini?')) {
                 await supabaseClient.from('products').delete().eq('id', id);
-                showToast('Produk berhasil dihapus');
+                showToast('Item berhasil dihapus');
                 navigateTo('admin-dashboard');
             }
         }
 
-        // 9. DATABASE INSPECTOR VIEW
+        // 6. DATABASE INSPECTOR VIEW
         async function renderDatabaseView() {
             const users = await DB.getUsers();
             const products = await DB.getProducts();
@@ -820,11 +658,11 @@
 
             return `
                 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-                    <div class="bg-white p-6 rounded-3xl border shadow-xs">
-                        <h1 class="font-extrabold text-xl">Supabase Database Inspector</h1>
-                        <p class="text-xs text-slate-500">Melihat data secara langsung dari tabel PostgreSQL cloud.</p>
+                    <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800">
+                        <h1 class="font-extrabold text-xl text-white">Supabase Game DB Inspector</h1>
+                        <p class="text-xs text-slate-400">Inspeksi data real-time database store top up.</p>
                     </div>
-                    <div class="bg-slate-900 rounded-3xl p-6 text-emerald-400 font-mono text-xs overflow-x-auto shadow-xl">
+                    <div class="bg-slate-900 rounded-3xl p-6 text-violet-400 font-mono text-xs overflow-x-auto border border-slate-800">
                         <pre>${JSON.stringify({ users, products, transactions }, null, 2)}</pre>
                     </div>
                 </div>
